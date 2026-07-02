@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profile — PUC EcoHealth Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root {
+  --primary: #0A1628;
+  --card-bg: #1A2744;
+  --accent: #4CAF50;
+  --gold: #FFD700;
+  --muted: #78909C;
+  --border: #263238;
+  --danger: #ef5350;
+  --info: #42a5f5;
+  --surface: #0f1e35;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: var(--primary); color: #e0e0e0; font-family: 'Poppins', sans-serif; min-height: 100vh; overflow-x: hidden; }
+
+/* PARTICLES */
+#particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+.particle { position: absolute; width: 4px; height: 4px; border-radius: 50%; background: var(--accent); opacity: 0.15; animation: float linear infinite; }
+@keyframes float { 0% { transform: translateY(100vh) scale(0); opacity: 0; } 10% { opacity: 0.15; } 90% { opacity: 0.15; } 100% { transform: translateY(-10px) scale(1); opacity: 0; } }
+
+/* NAVBAR */
+nav { background: rgba(10,22,40,0.97); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 64px; position: sticky; top: 0; z-index: 100; }
+.nav-brand { display: flex; align-items: center; gap: 10px; font-size: 1.1rem; font-weight: 700; color: var(--accent); text-decoration: none; }
+.nav-links { display: flex; gap: 4px; }
+.nav-links a { color: var(--muted); text-decoration: none; padding: 6px 14px; border-radius: 8px; font-size: 0.85rem; font-weight: 500; transition: all 0.2s; }
+.nav-links a:hover, .nav-links a.active { background: rgba(76,175,80,0.15); color: var(--accent); }
+.nav-right { display: flex; align-items: center; gap: 12px; }
+.nav-icon-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; color: var(--muted); cursor: pointer; transition: all 0.2s; font-size: 0.9rem; }
+.nav-icon-btn:hover { background: rgba(76,175,80,0.15); color: var(--accent); border-color: var(--accent); }
+.avatar-btn { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), #2e7d32); border: 2px solid var(--accent); color: #fff; font-weight: 700; font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+
+/* TICKER */
+.ticker { background: rgba(76,175,80,0.08); border-bottom: 1px solid rgba(76,175,80,0.2); padding: 7px 0; overflow: hidden; position: relative; z-index: 99; }
+.ticker-inner { display: flex; animation: ticker-scroll 30s linear infinite; white-space: nowrap; }
+.ticker-item { padding: 0 40px; font-size: 0.78rem; color: var(--muted); }
+.ticker-item span { color: var(--accent); font-weight: 600; }
+@keyframes ticker-scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+main { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 32px 20px 60px; }
+
+/* PROFILE HERO */
+.profile-hero { background: linear-gradient(135deg, rgba(26,39,68,0.95), rgba(15,30,53,0.95)); border: 1px solid rgba(76,175,80,0.25); border-radius: 20px; padding: 40px; display: flex; gap: 36px; align-items: center; margin-bottom: 28px; position: relative; overflow: hidden; backdrop-filter: blur(10px); }
+.profile-hero::before { content: ''; position: absolute; top: -60px; right: -60px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(76,175,80,0.12) 0%, transparent 70%); }
+.avatar-wrap { position: relative; flex-shrink: 0; }
+.avatar-large { width: 110px; height: 110px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), #1b5e20); display: flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: 800; color: #fff; border: 4px solid var(--accent); box-shadow: 0 0 30px rgba(76,175,80,0.4); position: relative; }
+.avatar-online { position: absolute; bottom: 6px; right: 6px; width: 18px; height: 18px; border-radius: 50%; background: var(--accent); border: 3px solid var(--primary); }
+.upload-btn { margin-top: 10px; background: rgba(76,175,80,0.12); border: 1px dashed var(--accent); color: var(--accent); border-radius: 8px; padding: 6px 12px; font-size: 0.75rem; cursor: pointer; display: block; text-align: center; font-family: 'Poppins', sans-serif; transition: all 0.2s; }
+.upload-btn:hover { background: rgba(76,175,80,0.22); }
+.profile-info { flex: 1; }
+.profile-name { font-size: 1.9rem; font-weight: 800; color: #fff; line-height: 1.2; }
+.active-badge { display: inline-flex; align-items: center; gap: 5px; background: rgba(76,175,80,0.15); border: 1px solid var(--accent); color: var(--accent); border-radius: 20px; padding: 3px 12px; font-size: 0.75rem; font-weight: 600; margin: 8px 0; }
+.active-badge::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); animation: pulse-dot 1.5s ease infinite; }
+@keyframes pulse-dot { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(1.3); } }
+.profile-meta { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
+.meta-row { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--muted); }
+.meta-row i { width: 16px; color: var(--accent); }
+.profile-actions { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
+.btn-primary { background: linear-gradient(135deg, var(--accent), #2e7d32); color: #fff; border: none; border-radius: 10px; padding: 9px 20px; font-size: 0.85rem; font-weight: 600; cursor: pointer; font-family: 'Poppins', sans-serif; transition: all 0.2s; }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(76,175,80,0.3); }
+.btn-outline { background: transparent; color: var(--muted); border: 1px solid var(--border); border-radius: 10px; padding: 9px 20px; font-size: 0.85rem; font-weight: 600; cursor: pointer; font-family: 'Poppins', sans-serif; transition: all 0.2s; }
+.btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+/* STATS GRID */
+.stats-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 28px; }
+.stat-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 14px; padding: 20px 16px; text-align: center; transition: all 0.3s; position: relative; overflow: hidden; }
+.stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--accent); transform: scaleX(0); transform-origin: left; transition: transform 0.4s; }
+.stat-card:hover::before { transform: scaleX(1); }
+.stat-card:hover { transform: translateY(-4px); border-color: rgba(76,175,80,0.4); }
+.stat-icon { font-size: 1.5rem; margin-bottom: 8px; }
+.stat-num { font-size: 1.8rem; font-weight: 800; color: #fff; }
+.stat-label { font-size: 0.72rem; color: var(--muted); margin-top: 3px; }
+
+/* SECTION HEADER */
+.section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+.section-title { font-size: 1.05rem; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 8px; }
+.section-title::before { content: ''; width: 4px; height: 20px; background: var(--accent); border-radius: 2px; }
+
+/* BADGE PROGRESS */
+.badge-progress-wrap { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 24px; margin-bottom: 28px; }
+.bp-title { font-size: 0.85rem; color: var(--muted); margin-bottom: 14px; }
+.bp-track { display: flex; align-items: center; gap: 0; position: relative; margin-bottom: 20px; }
+.bp-step { display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 1; }
+.bp-circle { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; border: 3px solid var(--border); background: var(--surface); position: relative; z-index: 2; transition: all 0.3s; }
+.bp-circle.unlocked { border-color: var(--accent); background: rgba(76,175,80,0.15); box-shadow: 0 0 14px rgba(76,175,80,0.3); }
+.bp-circle.locked { border-color: var(--border); opacity: 0.5; }
+.bp-line { flex: 1; height: 3px; background: var(--border); margin: 0 -2px; margin-top: -28px; position: relative; z-index: 1; }
+.bp-line.filled { background: linear-gradient(90deg, var(--accent), rgba(76,175,80,0.3)); }
+.bp-label { font-size: 0.7rem; color: var(--muted); }
+.bp-bar-wrap { margin-top: 8px; }
+.bp-bar-label { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--muted); margin-bottom: 6px; }
+.bp-bar-label span:last-child { color: var(--gold); font-weight: 600; }
+.progress-bar-outer { background: var(--surface); border-radius: 10px; height: 10px; overflow: hidden; }
+.progress-bar-inner { height: 100%; border-radius: 10px; background: linear-gradient(90deg, var(--accent), var(--gold)); transition: width 1.5s ease; }
+
+/* BADGES */
+.badges-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
+.badge-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 22px 16px; text-align: center; position: relative; overflow: hidden; transition: all 0.3s; }
+.badge-card.unlocked { border-color: rgba(76,175,80,0.4); }
+.badge-card.unlocked:hover { transform: translateY(-5px); box-shadow: 0 12px 30px rgba(76,175,80,0.15); }
+.badge-card.locked { opacity: 0.7; }
+.badge-icon { font-size: 2.4rem; margin-bottom: 10px; display: block; }
+.badge-name { font-size: 0.9rem; font-weight: 700; color: #fff; margin-bottom: 4px; }
+.badge-sub { font-size: 0.72rem; color: var(--muted); margin-bottom: 12px; }
+.lock-overlay { position: absolute; top: 10px; right: 10px; font-size: 0.9rem; color: var(--muted); }
+.badge-progress-bar { background: var(--surface); border-radius: 6px; height: 6px; overflow: hidden; margin-bottom: 10px; }
+.badge-progress-fill { height: 100%; border-radius: 6px; background: linear-gradient(90deg, var(--accent), var(--gold)); }
+.cert-btn { background: linear-gradient(135deg, var(--accent), #2e7d32); color: #fff; border: none; border-radius: 8px; padding: 7px 14px; font-size: 0.75rem; font-weight: 600; cursor: pointer; font-family: 'Poppins', sans-serif; width: 100%; transition: all 0.2s; }
+.cert-btn:hover { opacity: 0.85; }
+.cert-btn.locked-btn { background: var(--surface); color: var(--muted); border: 1px solid var(--border); cursor: not-allowed; }
+
+/* TABLE */
+.table-wrap { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; margin-bottom: 28px; }
+table { width: 100%; border-collapse: collapse; }
+thead tr { background: rgba(76,175,80,0.08); border-bottom: 1px solid var(--border); }
+th { padding: 12px 16px; text-align: left; font-size: 0.78rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+td { padding: 12px 16px; font-size: 0.83rem; color: #ccc; border-bottom: 1px solid rgba(255,255,255,0.04); }
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover { background: rgba(76,175,80,0.05); }
+.type-badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 600; }
+.type-medicine { background: rgba(66,165,245,0.15); color: var(--info); border: 1px solid rgba(66,165,245,0.3); }
+.type-ewaste { background: rgba(76,175,80,0.15); color: var(--accent); border: 1px solid rgba(76,175,80,0.3); }
+.points-badge { background: rgba(255,215,0,0.1); color: var(--gold); border: 1px solid rgba(255,215,0,0.3); border-radius: 6px; padding: 2px 8px; font-size: 0.75rem; font-weight: 700; }
+
+/* REWARDS */
+.rewards-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 28px; }
+.reward-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 14px; padding: 20px 14px; text-align: center; }
+.reward-icon { font-size: 1.8rem; margin-bottom: 8px; }
+.reward-name { font-size: 0.85rem; font-weight: 600; color: #fff; margin-bottom: 4px; }
+.reward-status { font-size: 0.72rem; margin-bottom: 10px; }
+.claimed { color: var(--accent); }
+.reward-bar { background: var(--surface); border-radius: 6px; height: 5px; overflow: hidden; margin-bottom: 8px; }
+.reward-bar-fill { height: 100%; border-radius: 6px; background: linear-gradient(90deg, var(--accent), var(--gold)); }
+
+/* ACTIVITY TIMELINE */
+.timeline { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 24px; margin-bottom: 28px; }
+.tl-item { display: flex; gap: 14px; margin-bottom: 20px; position: relative; }
+.tl-item:last-child { margin-bottom: 0; }
+.tl-item::after { content: ''; position: absolute; left: 17px; top: 34px; bottom: -20px; width: 2px; background: var(--border); }
+.tl-item:last-child::after { display: none; }
+.tl-dot { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; flex-shrink: 0; border: 2px solid var(--border); }
+.tl-dot.green { background: rgba(76,175,80,0.15); border-color: var(--accent); }
+.tl-dot.blue { background: rgba(66,165,245,0.15); border-color: var(--info); }
+.tl-dot.gold { background: rgba(255,215,0,0.1); border-color: var(--gold); }
+.tl-content { flex: 1; }
+.tl-action { font-size: 0.85rem; font-weight: 600; color: #ddd; }
+.tl-time { font-size: 0.72rem; color: var(--muted); margin-top: 3px; }
+
+/* PAYMENT METHODS */
+.payment-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 28px; }
+.pay-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 14px; padding: 22px; display: flex; flex-direction: column; align-items: center; gap: 10px; transition: all 0.3s; }
+.pay-card:hover { transform: translateY(-4px); border-color: rgba(76,175,80,0.4); }
+.pay-logo { width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1rem; color: #fff; }
+.pay-logo.bkash { background: #e2136e; }
+.pay-logo.nagad { background: #f25a24; }
+.pay-logo.upay { background: #7c4dff; }
+.pay-name { font-size: 0.9rem; font-weight: 700; color: #fff; }
+.pay-sub { font-size: 0.72rem; color: var(--muted); text-align: center; }
+.pay-link-btn { display: block; background: rgba(76,175,80,0.12); border: 1px solid rgba(76,175,80,0.3); color: var(--accent); border-radius: 8px; padding: 7px 18px; font-size: 0.8rem; font-weight: 600; text-decoration: none; transition: all 0.2s; text-align: center; }
+.pay-link-btn:hover { background: rgba(76,175,80,0.25); }
+
+/* FOOTER */
+footer { background: var(--surface); border-top: 1px solid var(--border); padding: 40px 24px 20px; margin-top: 60px; }
+.footer-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; max-width: 1100px; margin: 0 auto 32px; }
+.footer-col h4 { font-size: 0.9rem; font-weight: 700; color: var(--accent); margin-bottom: 14px; }
+.footer-col p, .footer-col a { font-size: 0.78rem; color: var(--muted); line-height: 1.8; text-decoration: none; display: block; transition: color 0.2s; }
+.footer-col a:hover { color: var(--accent); }
+.footer-bottom { text-align: center; font-size: 0.75rem; color: var(--muted); border-top: 1px solid var(--border); padding-top: 18px; max-width: 1100px; margin: 0 auto; }
+
+/* TOAST */
+.toast-wrap { position: fixed; bottom: 24px; right: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
+.toast { background: var(--card-bg); border: 1px solid var(--border); border-left: 4px solid var(--accent); border-radius: 10px; padding: 12px 18px; font-size: 0.82rem; color: #ddd; min-width: 240px; animation: slide-in 0.3s ease; box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+@keyframes slide-in { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+</style>
+</head>
+<body>
+<canvas id="particles"></canvas>
+
+<!-- NAVBAR -->
+<nav>
+  <a class="nav-brand" href="index.html">♻️ PUC EcoHealth Hub</a>
+  <div class="nav-links">
+    <a href="index.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+    <a href="profile.html" class="active"><i class="fas fa-user"></i> Profile</a>
+    <a href="bins.html"><i class="fas fa-trash-alt"></i> Smart Bins</a>
+    <a href="revenue.html"><i class="fas fa-chart-line"></i> Revenue</a>
+    <a href="#"><i class="fas fa-cog"></i> Settings</a>
+  </div>
+  <div class="nav-right">
+    <button class="nav-icon-btn" onclick="showToast('🔔 No new notifications')"><i class="fas fa-bell"></i></button>
+    <button class="nav-icon-btn" onclick="showToast('💰 220 coins available')"><i class="fas fa-wallet"></i></button>
+    <button class="nav-icon-btn"><i class="fas fa-globe"></i></button>
+    <div class="avatar-btn">RS</div>
+  </div>
+</nav>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-inner" id="ticker">
+    <span class="ticker-item">🌿 Welcome Rahul Singha! You have <span>220 coins</span></span>
+    <span class="ticker-item">♻️ BIN-004 is <span>90% full</span> — collection requested</span>
+    <span class="ticker-item">🏅 You are <span>80 coins</span> away from Gold Badge!</span>
+    <span class="ticker-item">💊 Last donation: <span>Vitamin C · May 2024</span></span>
+    <span class="ticker-item">🌿 Welcome Rahul Singha! You have <span>220 coins</span></span>
+    <span class="ticker-item">♻️ BIN-004 is <span>90% full</span> — collection requested</span>
+    <span class="ticker-item">🏅 You are <span>80 coins</span> away from Gold Badge!</span>
+    <span class="ticker-item">💊 Last donation: <span>Vitamin C · May 2024</span></span>
+  </div>
+</div>
+
+<main>
+  <!-- PROFILE HERO -->
+  <div class="profile-hero">
+    <div class="avatar-wrap">
+      <div class="avatar-large">RS<div class="avatar-online"></div></div>
+      <button class="upload-btn"><i class="fas fa-camera"></i> Upload Photo</button>
+    </div>
+    <div class="profile-info">
+      <div class="profile-name">Rahul Singha</div>
+      <span class="active-badge">Active Member</span>
+      <div class="profile-meta">
+        <div class="meta-row"><i class="fas fa-envelope"></i> rahulsingha313@gmail.com</div>
+        <div class="meta-row"><i class="fas fa-university"></i> Premier University Chittagong</div>
+        <div class="meta-row"><i class="fas fa-laptop-code"></i> Department of Computer Science & Engineering</div>
+        <div class="meta-row"><i class="fas fa-calendar-alt"></i> Member Since: January 2024</div>
+        <div class="meta-row"><i class="fas fa-id-card"></i> Member ID: PUC-ECO-2024-0042</div>
+      </div>
+      <div class="profile-actions">
+        <button class="btn-primary" onclick="showToast('✏️ Profile editor coming soon!')"><i class="fas fa-edit"></i> Edit Profile</button>
+        <button class="btn-outline" onclick="showToast('📤 Sharing profile link...')"><i class="fas fa-share-alt"></i> Share Profile</button>
+        <button class="btn-outline" onclick="showToast('📄 Generating QR code...')"><i class="fas fa-qrcode"></i> QR Code</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-icon">🪙</div><div class="stat-num" data-target="220">0</div><div class="stat-label">Total Coins</div></div>
+    <div class="stat-card"><div class="stat-icon">💊</div><div class="stat-num" data-target="16">0</div><div class="stat-label">Medicine Donations</div></div>
+    <div class="stat-card"><div class="stat-icon">♻️</div><div class="stat-num" data-target="8">0</div><div class="stat-label">E-Waste Deposits</div></div>
+    <div class="stat-card"><div class="stat-icon">🏅</div><div class="stat-num" data-target="2">0</div><div class="stat-label">Badges Earned</div></div>
+    <div class="stat-card"><div class="stat-icon">📜</div><div class="stat-num" data-target="2">0</div><div class="stat-label">Certificates</div></div>
+  </div>
+
+  <!-- BADGE PROGRESS -->
+  <div class="badge-progress-wrap">
+    <div class="section-header"><div class="section-title">Badge Journey</div></div>
+    <div class="bp-title">Your progress toward the next milestone</div>
+    <div class="bp-track">
+      <div class="bp-step"><div class="bp-circle unlocked">🥉</div><div class="bp-label">Bronze</div></div>
+      <div class="bp-line filled"></div>
+      <div class="bp-step"><div class="bp-circle unlocked">🥈</div><div class="bp-label">Silver</div></div>
+      <div class="bp-line filled"></div>
+      <div class="bp-step"><div class="bp-circle locked">🥇</div><div class="bp-label">Gold</div></div>
+      <div class="bp-line"></div>
+      <div class="bp-step"><div class="bp-circle locked">👑</div><div class="bp-label">Champion</div></div>
+    </div>
+    <div class="bp-bar-wrap">
+      <div class="bp-bar-label"><span>🥇 Gold Badge Progress</span><span>220 / 300 coins (80 more needed)</span></div>
+      <div class="progress-bar-outer"><div class="progress-bar-inner" style="width: 0%" id="goldBar"></div></div>
+    </div>
+  </div>
+
+  <!-- BADGES -->
+  <div class="section-header"><div class="section-title">Achievements & Badges</div></div>
+  <div class="badges-grid">
+    <div class="badge-card unlocked">
+      <span class="badge-icon">🥉</span>
+      <div class="badge-name">Bronze Eco</div>
+      <div class="badge-sub">100 coins reached</div>
+      <button class="cert-btn" onclick="showToast('📄 Downloading Bronze Certificate...')"><i class="fas fa-download"></i> Certificate</button>
+    </div>
+    <div class="badge-card unlocked">
+      <span class="badge-icon">🥈</span>
+      <div class="badge-name">Silver Guardian</div>
+      <div class="badge-sub">200 coins reached</div>
+      <button class="cert-btn" onclick="showToast('📄 Downloading Silver Certificate...')"><i class="fas fa-download"></i> Certificate</button>
+    </div>
+    <div class="badge-card locked">
+      <span class="lock-overlay"><i class="fas fa-lock"></i></span>
+      <span class="badge-icon">🥇</span>
+      <div class="badge-name">Gold Champion</div>
+      <div class="badge-sub">Need 80 more coins</div>
+      <div class="badge-progress-bar"><div class="badge-progress-fill" style="width: 73%"></div></div>
+      <button class="cert-btn locked-btn"><i class="fas fa-lock"></i> Locked</button>
+    </div>
+    <div class="badge-card locked">
+      <span class="lock-overlay"><i class="fas fa-lock"></i></span>
+      <span class="badge-icon">👑</span>
+      <div class="badge-name">Eco Champion</div>
+      <div class="badge-sub">Need 280 more coins</div>
+      <div class="badge-progress-bar"><div class="badge-progress-fill" style="width: 44%"></div></div>
+      <button class="cert-btn locked-btn"><i class="fas fa-lock"></i> Locked</button>
+    </div>
+  </div>
+
+  <!-- DONATION HISTORY -->
+  <div class="section-header"><div class="section-title">Donation History</div></div>
+  <div class="table-wrap" style="margin-bottom:28px">
+    <table>
+      <thead><tr><th>#</th><th>Type</th><th>Item</th><th>Qty</th><th>Destination</th><th>Date</th><th>Points</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td><span class="type-badge type-medicine">💊 Medicine</span></td><td>Paracetamol</td><td>50 units</td><td>Chittagong General Hospital</td><td>Jan 2024</td><td><span class="points-badge">+5</span></td></tr>
+        <tr><td>2</td><td><span class="type-badge type-ewaste">♻️ E-Waste</span></td><td>Old Phone</td><td>2 units</td><td>PUC Campus BIN-001</td><td>Feb 2024</td><td><span class="points-badge">+10</span></td></tr>
+        <tr><td>3</td><td><span class="type-badge type-medicine">💊 Medicine</span></td><td>Antibiotic</td><td>30 units</td><td>Medical College Hospital</td><td>Mar 2024</td><td><span class="points-badge">+5</span></td></tr>
+        <tr><td>4</td><td><span class="type-badge type-ewaste">♻️ E-Waste</span></td><td>Old Laptop</td><td>1 unit</td><td>Hazarighat BIN-003</td><td>Apr 2024</td><td><span class="points-badge">+10</span></td></tr>
+        <tr><td>5</td><td><span class="type-badge type-medicine">💊 Medicine</span></td><td>Vitamin C</td><td>20 units</td><td>Chittagong General Hospital</td><td>May 2024</td><td><span class="points-badge">+5</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- CLAIM REWARDS -->
+  <div class="section-header"><div class="section-title">Claim Rewards</div></div>
+  <div class="rewards-grid">
+    <div class="reward-card">
+      <div class="reward-icon">🥉</div>
+      <div class="reward-name">Bronze</div>
+      <div class="reward-status claimed">✅ Claimed</div>
+      <div class="reward-bar"><div class="reward-bar-fill" style="width:100%"></div></div>
+      <button class="cert-btn" onclick="showToast('Bronze reward already claimed!')">Claimed</button>
+    </div>
+    <div class="reward-card">
+      <div class="reward-icon">🥈</div>
+      <div class="reward-name">Silver</div>
+      <div class="reward-status claimed">✅ Claimed</div>
+      <div class="reward-bar"><div class="reward-bar-fill" style="width:100%"></div></div>
+      <button class="cert-btn" onclick="showToast('Silver reward already claimed!')">Claimed</button>
+    </div>
+    <div class="reward-card">
+      <div class="reward-icon">🥇</div>
+      <div class="reward-name">Gold</div>
+      <div class="reward-status" style="color:var(--muted)">🔒 220/300 coins</div>
+      <div class="reward-bar"><div class="reward-bar-fill" style="width:73%"></div></div>
+      <button class="cert-btn locked-btn">Need 80 more coins</button>
+    </div>
+    <div class="reward-card">
+      <div class="reward-icon">👑</div>
+      <div class="reward-name">Champion</div>
+      <div class="reward-status" style="color:var(--muted)">🔒 220/500 coins</div>
+      <div class="reward-bar"><div class="reward-bar-fill" style="width:44%"></div></div>
+      <button class="cert-btn locked-btn">Need 280 more coins</button>
+    </div>
+  </div>
+
+  <!-- ACTIVITY TIMELINE -->
+  <div class="section-header"><div class="section-title">Recent Activity</div></div>
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-dot green"><i class="fas fa-recycle"></i></div>
+      <div class="tl-content"><div class="tl-action">Deposited Old Laptop at Hazarighat BIN-003 — earned +10 coins</div><div class="tl-time">Apr 2024</div></div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot blue"><i class="fas fa-pills"></i></div>
+      <div class="tl-content"><div class="tl-action">Donated Antibiotic (30 units) to Medical College Hospital — earned +5 coins</div><div class="tl-time">Mar 2024</div></div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot gold"><i class="fas fa-medal"></i></div>
+      <div class="tl-content"><div class="tl-action">🥈 Silver Guardian Badge unlocked! 200 coin milestone reached</div><div class="tl-time">Mar 2024</div></div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot green"><i class="fas fa-recycle"></i></div>
+      <div class="tl-content"><div class="tl-action">Deposited Old Phone (2 units) at PUC Campus BIN-001 — earned +10 coins</div><div class="tl-time">Feb 2024</div></div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot blue"><i class="fas fa-pills"></i></div>
+      <div class="tl-content"><div class="tl-action">Donated Paracetamol (50 units) to Chittagong General — earned +5 coins</div><div class="tl-time">Jan 2024</div></div>
+    </div>
+  </div>
+
+  <!-- PAYMENT METHODS -->
+  <div class="section-header"><div class="section-title">Coin Withdrawal — Payment Methods</div></div>
+  <div class="payment-grid">
+    <div class="pay-card">
+      <div class="pay-logo bkash">bK</div>
+      <div class="pay-name">bKash</div>
+      <div class="pay-sub">Merchant: +8801885134402<br>Fast and secure mobile banking</div>
+      <a href="https://www.bkash.com" target="_blank" class="pay-link-btn"><i class="fas fa-external-link-alt"></i> Open bKash</a>
+    </div>
+    <div class="pay-card">
+      <div class="pay-logo nagad">Ng</div>
+      <div class="pay-name">Nagad</div>
+      <div class="pay-sub">Merchant: +8801885134402<br>Bangladesh Post Office MFS</div>
+      <a href="https://nagad.com.bd" target="_blank" class="pay-link-btn"><i class="fas fa-external-link-alt"></i> Open Nagad</a>
+    </div>
+    <div class="pay-card">
+      <div class="pay-logo upay">Up</div>
+      <div class="pay-name">উপায় Upay</div>
+      <div class="pay-sub">Merchant: +8801885134402<br>UCB mobile financial service</div>
+      <a href="https://www.upaybd.com" target="_blank" class="pay-link-btn"><i class="fas fa-external-link-alt"></i> Open Upay</a>
+    </div>
+  </div>
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-col">
+      <h4>♻️ PUC EcoHealth Hub</h4>
+      <p>Premier University Chittagong's smart recycling and healthcare platform. Building a greener tomorrow.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Quick Links</h4>
+      <a href="index.html">Dashboard</a>
+      <a href="profile.html">My Profile</a>
+      <a href="bins.html">Smart Bins</a>
+      <a href="revenue.html">Revenue</a>
+    </div>
+    <div class="footer-col">
+      <h4>Payment</h4>
+      <a href="https://www.bkash.com" target="_blank">bKash</a>
+      <a href="https://nagad.com.bd" target="_blank">Nagad</a>
+      <a href="https://www.upaybd.com" target="_blank">Upay</a>
+    </div>
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <p><i class="fas fa-map-marker-alt"></i> Premier University, Chittagong</p>
+      <p><i class="fas fa-envelope"></i> rahulsingha313@gmail.com</p>
+      <p><i class="fas fa-phone"></i> 8801885134402</p>
+    </div>
+  </div>
+  <div class="footer-bottom">♻️ PUC EcoHealth Hub © 2026 · Premier University Chittagong · All rights reserved</div>
+</footer>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+// Particles
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+const pts = [];
+for(let i=0;i<40;i++) pts.push({x:Math.random()*canvas.width,y:canvas.height+Math.random()*200,s:Math.random()*3+1,spd:Math.random()*0.5+0.2,op:Math.random()*0.12+0.04});
+function drawPts(){ctx.clearRect(0,0,canvas.width,canvas.height);pts.forEach(p=>{ctx.beginPath();ctx.arc(p.x,p.y,p.s,0,Math.PI*2);ctx.fillStyle=`rgba(76,175,80,${p.op})`;ctx.fill();p.y-=p.spd;if(p.y<-10){p.y=canvas.height+10;p.x=Math.random()*canvas.width;}});requestAnimationFrame(drawPts);}
+drawPts();
+window.addEventListener('resize',()=>{canvas.width=window.innerWidth;canvas.height=window.innerHeight;});
+
+// Counter
+function animateCount(el, target, dur=1500){
+  let start=null;
+  function step(ts){if(!start)start=ts;const prog=Math.min((ts-start)/dur,1);el.textContent=Math.floor(prog*target);if(prog<1)requestAnimationFrame(step);}
+  requestAnimationFrame(step);
+}
+document.querySelectorAll('[data-target]').forEach(el=>animateCount(el,+el.dataset.target));
+
+// Progress bar
+setTimeout(()=>{ document.getElementById('goldBar').style.width='73.3%'; }, 300);
+
+// Toast
+function showToast(msg){
+  const wrap=document.getElementById('toastWrap');
+  const t=document.createElement('div');t.className='toast';t.textContent=msg;wrap.appendChild(t);
+  setTimeout(()=>t.remove(),3200);
+}
+setTimeout(()=>showToast(' Welcome back, Rahul Singha!'),800);
+</script>
+</body>
+</html>

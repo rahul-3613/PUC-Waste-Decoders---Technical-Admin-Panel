@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Settings — PUC EcoHealth Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root {
+  --primary:#0A1628; --card-bg:#1A2744; --accent:#4CAF50; --gold:#FFD700;
+  --muted:#78909C; --border:#263238; --danger:#ef5350; --info:#42a5f5; --surface:#0f1e35;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--primary);color:#e0e0e0;font-family:'Poppins',sans-serif;min-height:100vh;overflow-x:hidden;}
+#pcanvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;}
+
+/* NAVBAR */
+nav{background:rgba(10,22,40,0.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:64px;position:sticky;top:0;z-index:100;}
+.nav-brand{display:flex;align-items:center;gap:10px;font-size:1.1rem;font-weight:700;color:var(--accent);text-decoration:none;}
+.nav-links{display:flex;gap:4px;}
+.nav-links a{color:var(--muted);text-decoration:none;padding:6px 14px;border-radius:8px;font-size:0.85rem;font-weight:500;transition:all 0.2s;}
+.nav-links a:hover,.nav-links a.active{background:rgba(76,175,80,0.15);color:var(--accent);}
+.nav-right{display:flex;align-items:center;gap:12px;}
+.nav-icon-btn{background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;color:var(--muted);cursor:pointer;transition:all 0.2s;font-size:0.9rem;}
+.nav-icon-btn:hover{background:rgba(76,175,80,0.15);color:var(--accent);border-color:var(--accent);}
+.avatar-btn{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#2e7d32);border:2px solid var(--accent);color:#fff;font-weight:700;font-size:0.8rem;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+
+/* TICKER */
+.ticker{background:rgba(76,175,80,0.08);border-bottom:1px solid rgba(76,175,80,0.2);padding:7px 0;overflow:hidden;position:relative;z-index:99;}
+.ticker-inner{display:flex;animation:ticker-scroll 30s linear infinite;white-space:nowrap;}
+.ticker-item{padding:0 40px;font-size:0.78rem;color:var(--muted);}
+.ticker-item span{color:var(--accent);font-weight:600;}
+@keyframes ticker-scroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+main{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:32px 20px 60px;display:grid;grid-template-columns:240px 1fr;gap:28px;}
+
+.page-header{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:12px;}
+.page-title{font-size:1.6rem;font-weight:800;color:#fff;}
+
+/* SIDE NAV */
+.settings-nav{position:sticky;top:84px;align-self:start;background:var(--card-bg);border:1px solid var(--border);border-radius:16px;padding:10px;display:flex;flex-direction:column;gap:4px;height:fit-content;}
+.settings-nav button{display:flex;align-items:center;gap:10px;background:transparent;border:none;color:var(--muted);text-align:left;padding:10px 14px;border-radius:10px;font-size:0.84rem;font-weight:500;font-family:'Poppins',sans-serif;cursor:pointer;transition:all 0.2s;}
+.settings-nav button i{width:16px;}
+.settings-nav button:hover{background:rgba(76,175,80,0.08);color:#ddd;}
+.settings-nav button.active{background:rgba(76,175,80,0.15);color:var(--accent);}
+
+/* PANELS */
+.settings-panel{display:none;}
+.settings-panel.active{display:block;animation:fadeIn 0.35s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.panel-card{background:var(--card-bg);border:1px solid var(--border);border-radius:18px;padding:28px;margin-bottom:22px;}
+.panel-title{font-size:1.05rem;font-weight:700;color:#fff;display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.panel-title::before{content:'';width:4px;height:18px;background:var(--accent);border-radius:2px;}
+.panel-sub{font-size:0.78rem;color:var(--muted);margin-bottom:20px;}
+
+.field-row{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid rgba(255,255,255,0.05);gap:16px;}
+.field-row:last-child{border-bottom:none;}
+.field-label{font-size:0.85rem;font-weight:600;color:#ddd;}
+.field-hint{font-size:0.72rem;color:var(--muted);margin-top:2px;}
+
+/* form inputs */
+.form-group{display:flex;flex-direction:column;gap:6px;margin-bottom:16px;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+label{font-size:0.78rem;font-weight:600;color:var(--muted);}
+input[type=text],input[type=email],input[type=tel],input[type=password],select,textarea{
+  background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 14px;color:#e0e0e0;font-size:0.85rem;font-family:'Poppins',sans-serif;outline:none;transition:border-color 0.2s;width:100%;
+}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);}
+
+/* toggle switch */
+.switch{position:relative;display:inline-block;width:46px;height:26px;flex-shrink:0;}
+.switch input{opacity:0;width:0;height:0;}
+.slider{position:absolute;cursor:pointer;inset:0;background:rgba(255,255,255,0.1);border:1px solid var(--border);border-radius:26px;transition:0.3s;}
+.slider::before{position:absolute;content:'';height:18px;width:18px;left:3px;bottom:3px;background:#78909C;border-radius:50%;transition:0.3s;}
+input:checked + .slider{background:rgba(76,175,80,0.25);border-color:var(--accent);}
+input:checked + .slider::before{transform:translateX(20px);background:var(--accent);}
+
+.submit-btn{background:linear-gradient(135deg,var(--accent),#2e7d32);color:#fff;border:none;border-radius:10px;padding:10px 24px;font-size:0.85rem;font-weight:600;cursor:pointer;font-family:'Poppins',sans-serif;transition:all 0.2s;}
+.submit-btn:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(76,175,80,0.3);}
+.btn-outline-g{background:transparent;color:var(--accent);border:1px solid rgba(76,175,80,0.4);border-radius:10px;padding:10px 22px;font-size:0.85rem;font-weight:600;cursor:pointer;font-family:'Poppins',sans-serif;transition:all 0.2s;}
+.btn-outline-g:hover{background:rgba(76,175,80,0.1);}
+.btn-danger{background:transparent;color:var(--danger);border:1px solid rgba(239,83,80,0.4);border-radius:10px;padding:10px 22px;font-size:0.85rem;font-weight:600;cursor:pointer;font-family:'Poppins',sans-serif;transition:all 0.2s;}
+.btn-danger:hover{background:rgba(239,83,80,0.1);}
+
+/* avatar upload */
+.avatar-upload-row{display:flex;align-items:center;gap:18px;margin-bottom:22px;}
+.avatar-big{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#2e7d32);border:2px solid var(--accent);color:#fff;font-weight:700;font-size:1.4rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+
+/* theme cards */
+.theme-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.theme-card{border:2px solid var(--border);border-radius:14px;padding:14px;cursor:pointer;transition:all 0.2s;text-align:center;}
+.theme-card.selected{border-color:var(--accent);background:rgba(76,175,80,0.08);}
+.theme-swatch{height:46px;border-radius:8px;margin-bottom:8px;}
+.theme-swatch.dark{background:linear-gradient(135deg,#0A1628,#1A2744);}
+.theme-swatch.green{background:linear-gradient(135deg,#0A1628,#2e7d32);}
+.theme-swatch.gold{background:linear-gradient(135deg,#1A2744,#7a6700);}
+.theme-name{font-size:0.78rem;font-weight:600;color:#ddd;}
+
+/* connected accounts */
+.acc-row{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid rgba(255,255,255,0.05);}
+.acc-row:last-child{border-bottom:none;}
+.acc-logo{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.78rem;color:#fff;flex-shrink:0;}
+.acc-logo.bkash{background:#e2136e;}
+.acc-logo.nagad{background:#ec6608;}
+.acc-logo.upay{background:#1565c0;}
+.acc-body{flex:1;}
+.acc-name{font-size:0.85rem;font-weight:600;color:#ddd;}
+.acc-status{font-size:0.72rem;color:var(--muted);}
+.chip{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:12px;font-size:0.72rem;font-weight:600;}
+.chip-green{background:rgba(76,175,80,0.15);color:var(--accent);border:1px solid rgba(76,175,80,0.3);}
+.chip-grey{background:rgba(120,144,156,0.1);color:var(--muted);border:1px solid rgba(120,144,156,0.3);}
+
+/* danger zone */
+.danger-zone{border:1px solid rgba(239,83,80,0.3);}
+.danger-zone .panel-title::before{background:var(--danger);}
+
+footer{background:var(--surface);border-top:1px solid var(--border);padding:40px 24px 20px;}
+.footer-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:32px;max-width:1100px;margin:0 auto 32px;}
+.footer-col h4{font-size:0.9rem;font-weight:700;color:var(--accent);margin-bottom:14px;}
+.footer-col p,.footer-col a{font-size:0.78rem;color:var(--muted);line-height:1.8;text-decoration:none;display:block;transition:color 0.2s;}
+.footer-col a:hover{color:var(--accent);}
+.footer-bottom{text-align:center;font-size:0.75rem;color:var(--muted);border-top:1px solid var(--border);padding-top:18px;max-width:1100px;margin:0 auto;}
+
+.toast-wrap{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:10px;}
+.toast{background:var(--card-bg);border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:10px;padding:12px 18px;font-size:0.82rem;color:#ddd;min-width:240px;animation:slide-in 0.3s ease;box-shadow:0 8px 24px rgba(0,0,0,0.3);}
+@keyframes slide-in{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+
+@media(max-width:800px){
+  main{grid-template-columns:1fr;}
+  .settings-nav{position:static;flex-direction:row;overflow-x:auto;}
+  .form-grid,.theme-grid{grid-template-columns:1fr;}
+  .nav-links{display:none;}
+}
+</style>
+</head>
+<body>
+<canvas id="pcanvas"></canvas>
+
+<nav>
+  <a class="nav-brand" href="index.html">♻️ PUC EcoHealth Hub</a>
+  <div class="nav-links">
+    <a href="index.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+    <a href="profile.html"><i class="fas fa-user"></i> Profile</a>
+    <a href="bins.html"><i class="fas fa-trash-alt"></i> Smart Bins</a>
+    <a href="revenue.html"><i class="fas fa-chart-line"></i> Revenue</a>
+    <a href="settings.html" class="active"><i class="fas fa-cog"></i> Settings</a>
+  </div>
+  <div class="nav-right">
+    <button class="nav-icon-btn" onclick="showToast('🔔 No new notifications')"><i class="fas fa-bell"></i></button>
+    <button class="nav-icon-btn" onclick="showToast('💰 220 coins available')"><i class="fas fa-wallet"></i></button>
+    <button class="nav-icon-btn"><i class="fas fa-globe"></i></button>
+    <div class="avatar-btn">RS</div>
+  </div>
+</nav>
+
+<div class="ticker">
+  <div class="ticker-inner">
+    <span class="ticker-item">⚙️ Settings <span>Last saved</span> a few moments ago</span>
+    <span class="ticker-item">🔐 Account secured with <span>password authentication</span></span>
+    <span class="ticker-item">📡 ESP32 alerts: <span>Enabled</span></span>
+    <span class="ticker-item">⚙️ Settings <span>Last saved</span> a few moments ago</span>
+    <span class="ticker-item">🔐 Account secured with <span>password authentication</span></span>
+    <span class="ticker-item">📡 ESP32 alerts: <span>Enabled</span></span>
+  </div>
+</div>
+
+<main>
+  <div class="page-header">
+    <div>
+      <div class="page-title">⚙️ Settings</div>
+      <div style="font-size:0.8rem;color:var(--muted)" id="dt"></div>
+    </div>
+  </div>
+
+  <!-- SIDE NAV -->
+  <div class="settings-nav">
+    <button class="active" data-target="account" onclick="switchPanel(this,'account')"><i class="fas fa-user-circle"></i> Account</button>
+    <button data-target="notifications" onclick="switchPanel(this,'notifications')"><i class="fas fa-bell"></i> Notifications</button>
+    <button data-target="appearance" onclick="switchPanel(this,'appearance')"><i class="fas fa-palette"></i> Appearance</button>
+    <button data-target="bins" onclick="switchPanel(this,'bins')"><i class="fas fa-trash-alt"></i> Bin Preferences</button>
+    <button data-target="payments" onclick="switchPanel(this,'payments')"><i class="fas fa-wallet"></i> Payment Accounts</button>
+    <button data-target="privacy" onclick="switchPanel(this,'privacy')"><i class="fas fa-shield-alt"></i> Privacy & Security</button>
+    <button data-target="danger" onclick="switchPanel(this,'danger')"><i class="fas fa-triangle-exclamation"></i> Danger Zone</button>
+  </div>
+
+  <!-- PANELS -->
+  <div class="panels">
+
+    <!-- ACCOUNT -->
+    <div class="settings-panel active" id="panel-account">
+      <div class="panel-card">
+        <div class="panel-title">Profile Information</div>
+        <div class="panel-sub">Update your personal and university details.</div>
+        <div class="avatar-upload-row">
+          <div class="avatar-big">RS</div>
+          <div>
+            <button class="btn-outline-g" onclick="showToast('📷 Choose a new photo')"><i class="fas fa-camera"></i> Change Photo</button>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="form-group"><label>Full Name</label><input type="text" value="Rahul Singha"></div>
+          <div class="form-group"><label>Email Address</label><input type="email" value="rahulsingha313@gmail.com"></div>
+          <div class="form-group"><label>University</label><input type="text" value="Premier University Chittagong"></div>
+          <div class="form-group"><label>Department</label><input type="text" value="CSE"></div>
+          <div class="form-group"><label>Phone Number</label><input type="tel" placeholder="+880 1XXX-XXXXXX"></div>
+          <div class="form-group"><label>Student ID</label><input type="text" value="PUC-ECO-2024-0042"></div>
+        </div>
+        <button class="submit-btn" onclick="showToast('✅ Profile updated successfully')"><i class="fas fa-save"></i> Save Changes</button>
+      </div>
+
+      <div class="panel-card">
+        <div class="panel-title">Change Password</div>
+        <div class="panel-sub">Use a strong password you don't use elsewhere.</div>
+        <div class="form-grid">
+          <div class="form-group"><label>Current Password</label><input type="password" placeholder="••••••••"></div>
+          <div class="form-group"></div>
+          <div class="form-group"><label>New Password</label><input type="password" placeholder="••••••••"></div>
+          <div class="form-group"><label>Confirm New Password</label><input type="password" placeholder="••••••••"></div>
+        </div>
+        <button class="submit-btn" onclick="showToast('🔒 Password updated')"><i class="fas fa-key"></i> Update Password</button>
+      </div>
+    </div>
+
+    <!-- NOTIFICATIONS -->
+    <div class="settings-panel" id="panel-notifications">
+      <div class="panel-card">
+        <div class="panel-title">Notification Preferences</div>
+        <div class="panel-sub">Choose what you want to be notified about.</div>
+        <div class="field-row"><div><div class="field-label">Bin fill-level alerts</div><div class="field-hint">Get notified when BIN-001 reaches 80% capacity</div></div><label class="switch"><input type="checkbox" checked onchange="showToast(this.checked?'🔔 Fill-level alerts on':'🔕 Fill-level alerts off')"><span class="slider"></span></label></div>
+        <div class="field-row"><div><div class="field-label">Coin & reward updates</div><div class="field-hint">Be notified when you earn coins or unlock a badge</div></div><label class="switch"><input type="checkbox" checked onchange="showToast(this.checked?'🪙 Reward alerts on':'🪙 Reward alerts off')"><span class="slider"></span></label></div>
+        <div class="field-row"><div><div class="field-label">Collection schedule reminders</div><div class="field-hint">Reminders before a scheduled pickup</div></div><label class="switch"><input type="checkbox" checked onchange="showToast(this.checked?'🚚 Schedule reminders on':'🚚 Schedule reminders off')"><span class="slider"></span></label></div>
+        <div class="field-row"><div><div class="field-label">ESP32 sensor status</div><div class="field-hint">Alerts when a sensor goes offline</div></div><label class="switch"><input type="checkbox" checked onchange="showToast(this.checked?'📡 Sensor alerts on':'📡 Sensor alerts off')"><span class="slider"></span></label></div>
+        <div class="field-row"><div><div class="field-label">Revenue & payout updates</div><div class="field-hint">Monthly revenue summaries</div></div><label class="switch"><input type="checkbox" onchange="showToast(this.checked?'💰 Revenue updates on':'💰 Revenue updates off')"><span class="slider"></span></label></div>
+        <div class="field-row"><div><div class="field-label">Email notifications</div><div class="field-hint">Also send important alerts to your email</div></div><label class="switch"><input type="checkbox" checked onchange="showToast(this.checked?'📧 Email alerts on':'📧 Email alerts off')"><span class="slider"></span></label></div>
+      </div>
+    </div>
+
+    <!-- APPEARANCE -->
+    <div class="settings-panel" id="panel-appearance">
+      <div class="panel-card">
+        <div class="panel-title">Theme</div>
+        <div class="panel-sub">Choose an accent style for your dashboard.</div>
+        <div class="theme-grid">
+          <div class="theme-card selected" onclick="selectTheme(this,'Dark Green (Default)')"><div class="theme-swatch dark"></div><div class="theme-name">Dark Green</div></div>
+          <div class="theme-card" onclick="selectTheme(this,'Forest')"><div class="theme-swatch green"></div><div class="theme-name">Forest</div></div>
+          <div class="theme-card" onclick="selectTheme(this,'Gold Accent')"><div class="theme-swatch gold"></div><div class="theme-name">Gold Accent</div></div>
+        </div>
+      </div>
+      <div class="panel-card">
+        <div class="panel-title">Display</div>
+        <div class="field-row"><div><div class="field-label">Reduce motion</div><div class="field-hint">Turn off ambient particle background and animations</div></div><label class="switch"><input type="checkbox" onchange="showToast(this.checked?'🐢 Reduced motion on':'✨ Animations on')"><span class="slider"></span></label></div>
+        <div class="field-row"><div><div class="field-label">Compact tables</div><div class="field-hint">Show more rows per screen</div></div><label class="switch"><input type="checkbox" onchange="showToast(this.checked?'📏 Compact tables on':'📏 Compact tables off')"><span class="slider"></span></label></div>
+        <div class="field-row"><div><div class="field-label">Language</div><div class="field-hint">Interface language</div></div>
+          <select style="max-width:160px;" onchange="showToast('🌐 Language set to '+this.value)">
+            <option>English</option>
+            <option>বাংলা</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- BIN PREFERENCES -->
+    <div class="settings-panel" id="panel-bins">
+      <div class="panel-card">
+        <div class="panel-title">Smart Bin Preferences</div>
+        <div class="panel-sub">Control thresholds and defaults used on the Smart Bins page.</div>
+        <div class="form-grid">
+          <div class="form-group"><label>Default Bin</label>
+            <select><option>BIN-001 — Premier University Chittagong</option><option>BIN-002 — PUC Campus B</option><option>BIN-003 — Hazarighat Collection Point</option><option>BIN-004 — City Corporation Office</option></select>
+          </div>
+          <div class="form-group"><label>Fill-Level Alert Threshold</label>
+            <select><option>70%</option><option selected>80%</option><option>90%</option></select>
+          </div>
+        </div>
+        <div class="field-row"><div><div class="field-label">Auto-request collection</div><div class="field-hint">Automatically submit a collection request when threshold is reached</div></div><label class="switch"><input type="checkbox" onchange="showToast(this.checked?'🚚 Auto-request on':'🚚 Auto-request off')"><span class="slider"></span></label></div>
+        <div class="field-row"><div><div class="field-label">Show inactive bins</div><div class="field-hint">Display BIN-002, BIN-003, BIN-004 on the Smart Bins map</div></div><label class="switch"><input type="checkbox" checked onchange="showToast(this.checked?'🗺️ Showing inactive bins':'🗺️ Hiding inactive bins')"><span class="slider"></span></label></div>
+        <button class="submit-btn" onclick="showToast('✅ Bin preferences saved')"><i class="fas fa-save"></i> Save Preferences</button>
+      </div>
+    </div>
+
+    <!-- PAYMENTS -->
+    <div class="settings-panel" id="panel-payments">
+      <div class="panel-card">
+        <div class="panel-title">Connected Payment Accounts</div>
+        <div class="panel-sub">Used for coin withdrawal and revenue payouts.</div>
+        <div class="acc-row">
+          <div class="acc-logo bkash">bKash</div>
+          <div class="acc-body"><div class="acc-name">bKash Merchant</div><div class="acc-status">017XX-XXXXXX</div></div>
+          <span class="chip chip-green">Connected</span>
+        </div>
+        <div class="acc-row">
+          <div class="acc-logo nagad">Nagad</div>
+          <div class="acc-body"><div class="acc-name">Nagad</div><div class="acc-status">Not connected</div></div>
+          <button class="btn-outline-g" onclick="showToast('🔗 Connect Nagad account')">Connect</button>
+        </div>
+        <div class="acc-row">
+          <div class="acc-logo upay">upay</div>
+          <div class="acc-body"><div class="acc-name">উপায় Upay</div><div class="acc-status">Not connected</div></div>
+          <button class="btn-outline-g" onclick="showToast('🔗 Connect Upay account')">Connect</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRIVACY -->
+    <div class="settings-panel" id="panel-privacy">
+      <div class="panel-card">
+        <div class="panel-title">Privacy & Security</div>
+        <div class="field-row"><div><div class="field-label">Two-factor authentication</div><div class="field-hint">Add an extra layer of security to your account</div></div><label class="switch"><input type="checkbox" onchange="showToast(this.checked?'🔐 2FA enabled':'🔐 2FA disabled')"><span class="slider"></span></label></div>
+        <div class="field-row"><div><div class="field-label">Show my name on leaderboards</div><div class="field-hint">Other students can see your coin rank</div></div><label class="switch"><input type="checkbox" checked onchange="showToast(this.checked?'👀 Visible on leaderboard':'🙈 Hidden from leaderboard')"><span class="slider"></span></label></div>
+        <div class="field-row"><div><div class="field-label">Share donation history with university</div><div class="field-hint">Used for sustainability reporting</div></div><label class="switch"><input type="checkbox" checked onchange="showToast(this.checked?'📊 Sharing enabled':'📊 Sharing disabled')"><span class="slider"></span></label></div>
+        <button class="btn-outline-g" style="margin-top:8px;" onclick="showToast('📥 Preparing your data export...')"><i class="fas fa-download"></i> Download My Data</button>
+      </div>
+    </div>
+
+    <!-- DANGER ZONE -->
+    <div class="settings-panel" id="panel-danger">
+      <div class="panel-card danger-zone">
+        <div class="panel-title" style="color:var(--danger)">Danger Zone</div>
+        <div class="panel-sub">These actions are permanent and cannot be undone.</div>
+        <div class="field-row"><div><div class="field-label">Deactivate account</div><div class="field-hint">Temporarily disable your PUC EcoHealth Hub account</div></div><button class="btn-danger" onclick="showToast('⚠️ Account deactivation requested')">Deactivate</button></div>
+        <div class="field-row"><div><div class="field-label">Delete account permanently</div><div class="field-hint">All coins, badges and history will be erased</div></div><button class="btn-danger" onclick="showToast('🛑 Type DELETE to confirm — not yet enabled')">Delete Account</button></div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  <div class="footer-grid">
+    <div class="footer-col"><h4>♻️ PUC EcoHealth Hub</h4><p>Premier University Chittagong's smart recycling and healthcare platform. Building a greener tomorrow.</p></div>
+    <div class="footer-col"><h4>Quick Links</h4><a href="index.html">Dashboard</a><a href="profile.html">My Profile</a><a href="bins.html">Smart Bins</a><a href="revenue.html">Revenue</a></div>
+    <div class="footer-col"><h4>Payment</h4><a href="https://www.bkash.com" target="_blank">bKash</a><a href="https://nagad.com.bd" target="_blank">Nagad</a><a href="https://www.upaybd.com" target="_blank">উপায় Upay</a></div>
+    <div class="footer-col"><h4>Contact</h4><p><i class="fas fa-map-marker-alt"></i> 44 Hazari Lane, Chattogram 4000</p><p><i class="fas fa-envelope"></i> ecohub@puc.edu.bd</p><p><i class="fas fa-phone"></i> +880 31-XXXXXXX</p></div>
+  </div>
+  <div class="footer-bottom">♻️ PUC EcoHealth Hub © 2026 · Premier University Chittagong · All rights reserved</div>
+</footer>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+const canvas=document.getElementById('pcanvas');const ctx=canvas.getContext('2d');
+canvas.width=window.innerWidth;canvas.height=window.innerHeight;
+const pts=[];for(let i=0;i<35;i++)pts.push({x:Math.random()*canvas.width,y:canvas.height+Math.random()*200,s:Math.random()*2.5+1,spd:Math.random()*0.5+0.2,op:Math.random()*0.1+0.03});
+function drawPts(){ctx.clearRect(0,0,canvas.width,canvas.height);pts.forEach(p=>{ctx.beginPath();ctx.arc(p.x,p.y,p.s,0,Math.PI*2);ctx.fillStyle=`rgba(76,175,80,${p.op})`;ctx.fill();p.y-=p.spd;if(p.y<-10){p.y=canvas.height+10;p.x=Math.random()*canvas.width;}});requestAnimationFrame(drawPts);}
+drawPts();
+window.addEventListener('resize',()=>{canvas.width=window.innerWidth;canvas.height=window.innerHeight;});
+
+function updateDT(){document.getElementById('dt').textContent=new Date().toLocaleString('en-BD',{weekday:'long',year:'numeric',month:'long',day:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit'});}
+setInterval(updateDT,1000);updateDT();
+
+function showToast(msg){const wrap=document.getElementById('toastWrap');const t=document.createElement('div');t.className='toast';t.textContent=msg;wrap.appendChild(t);setTimeout(()=>t.remove(),3500);}
+
+function switchPanel(btn,target){
+  document.querySelectorAll('.settings-nav button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.settings-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel-'+target).classList.add('active');
+}
+
+function selectTheme(card,name){
+  document.querySelectorAll('.theme-card').forEach(c=>c.classList.remove('selected'));
+  card.classList.add('selected');
+  showToast('🎨 Theme set to '+name);
+}
+</script>
+</body>
+</html>

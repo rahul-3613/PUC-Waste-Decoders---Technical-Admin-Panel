@@ -1,0 +1,1355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>PUC EcoHealth Hub – Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<style>
+:root{
+  --primary:#0A1628;--secondary:#1B2E1B;--card-bg:#1A2744;--card-bg2:#112240;
+  --accent:#4CAF50;--accent2:#66BB6A;--gold:#FFD700;--gold2:#FFC107;
+  --white:#FFFFFF;--muted:#78909C;--border:#263238;
+  --danger:#EF5350;--warning:#FFA726;--info:#29B6F6;--purple:#AB47BC;
+  --glass:rgba(255,255,255,0.04);--glass-border:rgba(255,255,255,0.08);
+  --ggreen:linear-gradient(135deg,#4CAF50,#1B5E20);
+  --ggold:linear-gradient(135deg,#FFD700,#FF8F00);
+  --gblue:linear-gradient(135deg,#1565C0,#0D47A1);
+  --gteal:linear-gradient(135deg,#00897B,#004D40);
+  --gpurple:linear-gradient(135deg,#7B1FA2,#4A148C);
+  --gred:linear-gradient(135deg,#C62828,#B71C1C);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--primary);color:var(--white);font-family:'Poppins',sans-serif;min-height:100vh;overflow-x:hidden;}
+
+/* ── BG PARTICLES ── */
+#particles{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;}
+.main-z{position:relative;z-index:1;}
+
+/* ── NAVBAR ── */
+.navbar{
+  position:sticky;top:0;z-index:1000;
+  background:rgba(10,22,40,0.97);backdrop-filter:blur(24px);
+  border-bottom:1px solid var(--glass-border);
+  padding:0 28px;height:66px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.brand-icon{width:40px;height:40px;background:var(--ggreen);border-radius:11px;
+  display:flex;align-items:center;justify-content:center;font-size:20px;
+  box-shadow:0 0 18px rgba(76,175,80,.5);animation:glowPulse 3s infinite;}
+@keyframes glowPulse{0%,100%{box-shadow:0 0 18px rgba(76,175,80,.5);}50%{box-shadow:0 0 30px rgba(76,175,80,.8);}}
+.brand-text{font-size:18px;font-weight:800;color:#fff;}
+.brand-text span{color:var(--accent);}
+.brand-sub{font-size:9px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;display:block;margin-top:-2px;}
+
+.nav-links{display:flex;gap:4px;list-style:none;}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:12.5px;font-weight:500;
+  padding:7px 13px;border-radius:9px;transition:all .2s;display:flex;align-items:center;gap:6px;}
+.nav-links a:hover,.nav-links a.active{background:rgba(76,175,80,.1);color:var(--white);}
+.nav-links a.active{color:var(--accent);border:1px solid rgba(76,175,80,.25);}
+
+.nav-right{display:flex;align-items:center;gap:8px;}
+.nav-btn{width:38px;height:38px;background:var(--glass);border:1px solid var(--glass-border);
+  border-radius:10px;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:var(--muted);font-size:14px;transition:all .2s;position:relative;}
+.nav-btn:hover{color:var(--white);border-color:var(--accent);background:rgba(76,175,80,.1);}
+.badge-dot{position:absolute;top:-3px;right:-3px;width:17px;height:17px;
+  background:var(--danger);border-radius:50%;font-size:9px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;animation:blink .8s infinite alternate;}
+@keyframes blink{from{opacity:1;}to{opacity:.5;}}
+.avatar{width:38px;height:38px;background:var(--ggreen);border-radius:11px;
+  display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;
+  cursor:pointer;border:2px solid var(--accent);transition:transform .2s;}
+.avatar:hover{transform:scale(1.08);}
+.nav-toggle{display:none;background:none;border:none;color:#fff;font-size:20px;cursor:pointer;}
+
+/* ── NOTIFICATION PANEL ── */
+.notif-panel{
+  position:fixed;top:74px;right:20px;width:340px;z-index:2000;
+  background:#13213a;border:1px solid rgba(76,175,80,.25);border-radius:16px;
+  box-shadow:0 20px 60px rgba(0,0,0,.6);overflow:hidden;
+  transform:translateY(-10px) scale(.97);opacity:0;pointer-events:none;
+  transition:all .3s cubic-bezier(.34,1.56,.64,1);
+}
+.notif-panel.open{transform:none;opacity:1;pointer-events:all;}
+.notif-header{display:flex;justify-content:space-between;align-items:center;
+  padding:14px 18px;border-bottom:1px solid var(--glass-border);}
+.notif-header h4{font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px;}
+.notif-header span{font-size:10px;color:var(--muted);cursor:pointer;transition:color .2s;}
+.notif-header span:hover{color:var(--accent);}
+.notif-list{max-height:340px;overflow-y:auto;}
+.notif-item{display:flex;gap:12px;padding:13px 18px;border-bottom:1px solid rgba(255,255,255,.04);
+  transition:background .2s;cursor:pointer;}
+.notif-item:hover{background:rgba(255,255,255,.04);}
+.notif-item.unread{background:rgba(76,175,80,.05);}
+.ni-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;
+  justify-content:center;font-size:15px;flex-shrink:0;}
+.ni-green{background:rgba(76,175,80,.15);}
+.ni-gold{background:rgba(255,215,0,.15);}
+.ni-red{background:rgba(239,83,80,.15);}
+.ni-blue{background:rgba(41,182,246,.15);}
+.ni-body{flex:1;}
+.ni-title{font-size:12px;font-weight:600;line-height:1.4;}
+.ni-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+.ni-time{font-size:10px;color:var(--muted);margin-top:3px;}
+.unread-dot{width:7px;height:7px;background:var(--accent);border-radius:50%;margin-top:5px;flex-shrink:0;}
+
+/* ── TICKER ── */
+.ticker-bar{background:rgba(76,175,80,.08);border-bottom:1px solid rgba(76,175,80,.15);
+  padding:7px 0;overflow:hidden;white-space:nowrap;}
+.ticker-inner{
+    display:inline-block;
+    animation:ticker 60s linear infinite;
+}
+.ticker-inner span{margin:0 40px;font-size:12px;color:var(--muted);}
+.ticker-inner span i{color:var(--accent);margin-right:6px;}
+@keyframes ticker{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+
+/* ── WRAPPER ── */
+.wrapper{max-width:1440px;margin:0 auto;padding:26px 26px 60px;}
+
+/* ── PAGE HEADER ── */
+.page-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:26px;animation:fadeD .5s ease;}
+.ph-left h1{font-size:28px;font-weight:800;background:linear-gradient(135deg,#fff,#4CAF50);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.ph-left p{font-size:13px;color:var(--muted);margin-top:5px;}
+.ph-left p span{color:var(--accent);font-weight:600;}
+.ph-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px;}
+.live-badge{display:flex;align-items:center;gap:7px;
+  background:rgba(76,175,80,.1);border:1px solid rgba(76,175,80,.3);
+  padding:7px 16px;border-radius:22px;font-size:12px;font-weight:600;color:var(--accent);}
+.live-dot{width:8px;height:8px;background:var(--accent);border-radius:50%;animation:pulse 1.5s infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.5;transform:scale(1.3);}}
+.date-badge{font-size:11px;color:var(--muted);background:var(--glass);
+  border:1px solid var(--glass-border);padding:5px 13px;border-radius:12px;}
+
+/* ── STAT CARDS ── */
+.stats-row{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-bottom:22px;}
+.scard{
+  background:var(--card-bg);border:1px solid var(--glass-border);border-radius:16px;
+  padding:20px;position:relative;overflow:hidden;cursor:pointer;
+  transition:transform .3s,box-shadow .3s;animation:fadeU .5s ease both;
+}
+.scard:hover{transform:translateY(-5px);box-shadow:0 22px 44px rgba(0,0,0,.35);}
+.scard::after{content:'';position:absolute;top:0;right:0;width:90px;height:90px;
+  border-radius:50%;opacity:.07;transform:translate(25px,-25px);}
+.scard.g::after{background:#4CAF50;} .scard.go::after{background:#FFD700;}
+.scard.b::after{background:#29B6F6;} .scard.t::after{background:#00BFA5;}
+.scard.p::after{background:#AB47BC;}
+.sc-icon{width:46px;height:46px;border-radius:13px;display:flex;align-items:center;
+  justify-content:center;font-size:19px;margin-bottom:14px;}
+.scard.g .sc-icon{background:rgba(76,175,80,.15);color:var(--accent);}
+.scard.go .sc-icon{background:rgba(255,215,0,.15);color:var(--gold);}
+.scard.b .sc-icon{background:rgba(41,182,246,.15);color:var(--info);}
+.scard.t .sc-icon{background:rgba(0,191,165,.15);color:#00BFA5;}
+.scard.p .sc-icon{background:rgba(171,71,188,.15);color:#CE93D8;}
+.sc-val{font-size:30px;font-weight:900;line-height:1;margin-bottom:4px;}
+.sc-lbl{font-size:11.5px;color:var(--muted);font-weight:500;}
+.sc-trend{margin-top:11px;font-size:11px;display:flex;align-items:center;gap:4px;}
+.trend-up{color:var(--accent);} .trend-dn{color:var(--danger);}
+.sc-sparkline{margin-top:10px;height:28px;display:flex;align-items:flex-end;gap:2px;}
+.spark-bar{flex:1;border-radius:3px 3px 0 0;transition:height .4s;opacity:.7;}
+
+/* ── TABS ── */
+.tab-bar{display:flex;gap:6px;margin-bottom:18px;background:rgba(255,255,255,.03);
+  border:1px solid var(--glass-border);border-radius:14px;padding:5px;}
+.tab{padding:8px 18px;border-radius:10px;font-size:12.5px;font-weight:600;cursor:pointer;
+  color:var(--muted);transition:all .25s;border:none;background:none;}
+.tab.active{background:var(--ggreen);color:#fff;box-shadow:0 4px 14px rgba(76,175,80,.35);}
+.tab:hover:not(.active){background:var(--glass);color:var(--white);}
+.tab-content{display:none;animation:fadeD .3s ease;}
+.tab-content.active{display:block;}
+
+/* ── MAIN GRID ── */
+.main-grid{display:grid;grid-template-columns:1fr 370px;gap:20px;margin-bottom:20px;}
+.left-col{display:flex;flex-direction:column;gap:20px;}
+.right-col{display:flex;flex-direction:column;gap:20px;}
+
+/* ── SECTION CARD ── */
+.sc2{background:var(--card-bg);border:1px solid var(--glass-border);border-radius:16px;padding:20px;animation:fadeU .55s ease both;}
+.sh{display:flex;justify-content:space-between;align-items:center;margin-bottom:17px;}
+.sh-title{font-size:14.5px;font-weight:700;display:flex;align-items:center;gap:8px;}
+.sh-title i{color:var(--accent);font-size:13px;}
+.sh-badge{font-size:10.5px;padding:3px 11px;border-radius:18px;font-weight:600;
+  background:rgba(76,175,80,.1);color:var(--accent);border:1px solid rgba(76,175,80,.2);}
+.sh-badge.gold{background:rgba(255,215,0,.1);color:var(--gold);border-color:rgba(255,215,0,.2);}
+.sh-badge.red{background:rgba(239,83,80,.1);color:var(--danger);border-color:rgba(239,83,80,.2);}
+.view-all{font-size:11px;color:var(--muted);background:none;border:none;cursor:pointer;
+  display:flex;align-items:center;gap:4px;transition:color .2s;font-family:'Poppins',sans-serif;}
+.view-all:hover{color:var(--accent);}
+
+/* ── BIN STATUS ── */
+.bin-list{display:flex;flex-direction:column;gap:10px;}
+.bin-row{display:flex;align-items:center;gap:12px;padding:13px 15px;
+  background:rgba(255,255,255,.03);border-radius:13px;border:1px solid var(--glass-border);
+  transition:all .25s;cursor:pointer;}
+.bin-row:hover{background:rgba(76,175,80,.07);border-color:rgba(76,175,80,.2);transform:translateX(4px);}
+.bin-emoji{font-size:22px;width:34px;text-align:center;}
+.bin-info{flex:1;}
+.bin-name{font-size:13px;font-weight:600;}
+.bin-loc{font-size:11px;color:var(--muted);margin-top:2px;}
+.bin-collector{font-size:10.5px;color:var(--info);margin-top:2px;}
+.bin-r{display:flex;flex-direction:column;align-items:flex-end;gap:5px;}
+.bst{font-size:11px;font-weight:600;padding:3px 11px;border-radius:11px;}
+.bst.empty{background:rgba(76,175,80,.15);color:#4CAF50;}
+.bst.mid{background:rgba(255,167,38,.15);color:#FFA726;}
+.bst.full{background:rgba(239,83,80,.15);color:#EF5350;}
+.bbar{width:100px;height:6px;background:rgba(255,255,255,.09);border-radius:4px;overflow:hidden;}
+.bfill{height:100%;border-radius:4px;transition:width 1.2s ease;}
+.bfill.g{background:var(--ggreen);} .bfill.o{background:linear-gradient(90deg,#FFA726,#FF6D00);}
+.bfill.r{background:linear-gradient(90deg,#EF5350,#B71C1C);}
+.req-btn{font-size:10px;padding:3px 10px;border-radius:7px;border:1px solid rgba(76,175,80,.3);
+  background:rgba(76,175,80,.08);color:var(--accent);cursor:pointer;transition:all .2s;font-family:'Poppins',sans-serif;}
+.req-btn:hover{background:rgba(76,175,80,.2);}
+
+/* ── ACTIVITY ── */
+.act-list{display:flex;flex-direction:column;gap:0;}
+.act-row{display:flex;align-items:flex-start;gap:12px;padding:11px 0;
+  border-bottom:1px solid rgba(255,255,255,.05);position:relative;}
+.act-row:last-child{border-bottom:none;}
+.act-line{position:absolute;left:4px;top:20px;bottom:-11px;width:2px;background:rgba(255,255,255,.06);}
+.act-row:last-child .act-line{display:none;}
+.act-dot{width:10px;height:10px;border-radius:50%;margin-top:5px;flex-shrink:0;position:relative;z-index:1;}
+.ad-g{background:var(--accent);box-shadow:0 0 8px var(--accent);}
+.ad-o{background:var(--warning);box-shadow:0 0 8px var(--warning);}
+.ad-b{background:var(--info);box-shadow:0 0 8px var(--info);}
+.ad-p{background:#AB47BC;box-shadow:0 0 8px #AB47BC;}
+.act-body{flex:1;}
+.act-txt{font-size:12.5px;color:#B0BEC5;line-height:1.55;}
+.act-txt strong{color:#fff;}
+.act-meta{display:flex;gap:10px;margin-top:3px;}
+.act-time{font-size:10.5px;color:var(--muted);}
+.act-coins{font-size:10.5px;font-weight:600;color:var(--accent);}
+.act-tag{font-size:10px;padding:2px 7px;border-radius:6px;background:rgba(76,175,80,.1);color:var(--accent);}
+
+/* ── LEADERBOARD ── */
+.lb-list{display:flex;flex-direction:column;gap:7px;}
+.lb-row{display:flex;align-items:center;gap:11px;padding:10px 13px;
+  background:rgba(255,255,255,.03);border-radius:12px;cursor:pointer;
+  transition:all .2s;border:1px solid transparent;}
+.lb-row:hover{background:rgba(76,175,80,.07);border-color:rgba(76,175,80,.15);}
+.lb-row.top1{background:rgba(255,215,0,.06);border-color:rgba(255,215,0,.15);}
+.lb-rank{font-size:18px;width:28px;text-align:center;}
+.lb-av{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;
+  justify-content:center;font-size:13px;font-weight:800;flex-shrink:0;}
+.av-gold{background:var(--ggold);} .av-silver{background:linear-gradient(135deg,#9E9E9E,#616161);}
+.av-bronze{background:linear-gradient(135deg,#A1887F,#6D4C41);}
+.av-blue{background:linear-gradient(135deg,#5C6BC0,#3949AB);}
+.av-teal{background:var(--gteal);}
+.lb-info{flex:1;}
+.lb-name{font-size:12.5px;font-weight:700;}
+.lb-dept{font-size:10.5px;color:var(--muted);margin-top:1px;}
+.lb-right{display:flex;flex-direction:column;align-items:flex-end;gap:3px;}
+.lb-coins{font-size:13px;font-weight:800;color:var(--gold);display:flex;align-items:center;gap:4px;}
+.active-tag{font-size:9.5px;background:rgba(76,175,80,.15);color:var(--accent);
+  padding:2px 7px;border-radius:7px;}
+.lb-bar-wrap{width:60px;height:4px;background:rgba(255,255,255,.08);border-radius:2px;}
+.lb-bar-fill{height:100%;border-radius:2px;background:var(--ggreen);}
+
+/* ── PAYMENT / REVENUE ── */
+.rev-card{background:linear-gradient(135deg,rgba(76,175,80,.12),rgba(27,46,27,.25));
+  border:1px solid rgba(76,175,80,.25);}
+.rev-total{font-size:38px;font-weight:900;color:var(--gold);margin:6px 0;letter-spacing:-1px;}
+.rev-currency{font-size:14px;color:var(--gold2);margin-right:4px;}
+.rev-sub{font-size:11.5px;color:var(--muted);}
+.pay-methods{display:flex;flex-direction:column;gap:8px;margin:16px 0;}
+.pay-row{display:flex;align-items:center;justify-content:space-between;
+  padding:10px 14px;border-radius:12px;border:1px solid var(--glass-border);
+  background:rgba(255,255,255,.03);transition:all .2s;cursor:pointer;}
+.pay-row:hover{border-color:rgba(76,175,80,.3);background:rgba(76,175,80,.06);}
+.pay-left{display:flex;align-items:center;gap:10px;}
+.pay-logo{width:38px;height:22px;border-radius:5px;display:flex;align-items:center;
+  justify-content:center;font-size:10px;font-weight:800;}
+.pl-bkash{background:#E2136E;color:#fff;}
+.pl-nagad{background:#F15A24;color:#fff;}
+.pl-upay{background:#2196F3;color:#fff;}
+.pay-name{font-size:12.5px;font-weight:600;}
+.pay-num{font-size:10.5px;color:var(--muted);}
+.pay-link{font-size:11px;color:var(--accent);display:flex;align-items:center;gap:4px;
+  text-decoration:none;transition:color .2s;}
+.pay-link:hover{color:var(--accent2);}
+.rev-bars{display:flex;flex-direction:column;gap:9px;}
+.rb-row{display:flex;flex-direction:column;gap:4px;}
+.rb-lbl{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);}
+.rb-lbl span:last-child{color:#fff;font-weight:600;}
+.rb{height:7px;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden;}
+.rb-fill{height:100%;border-radius:4px;animation:fillAnim 1.8s ease forwards;}
+@keyframes fillAnim{from{width:0;}}
+.rb-40{width:40%;background:var(--ggreen);}
+.rb-30a{width:30%;background:var(--ggold);}
+.rb-30b{width:30%;background:var(--gblue);}
+
+/* ── ECO IMPACT ── */
+.impact-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px;}
+.imp-card{background:var(--card-bg);border:1px solid var(--glass-border);border-radius:15px;
+  padding:18px;text-align:center;transition:transform .2s;animation:fadeU .7s ease both;cursor:pointer;}
+.imp-card:hover{transform:translateY(-4px);}
+.imp-emoji{font-size:32px;display:block;margin-bottom:10px;}
+.imp-val{font-size:22px;font-weight:900;}
+.imp-val.green{color:var(--accent);} .imp-val.blue{color:var(--info);}
+.imp-val.gold{color:var(--gold);} .imp-val.teal{color:#00BFA5;}
+.imp-lbl{font-size:11px;color:var(--muted);margin-top:5px;}
+.imp-target{font-size:10px;color:rgba(255,255,255,.25);margin-top:3px;}
+.counter{display:inline-block;}
+
+/* ── PARTNERS ── */
+.partner-list{display:flex;flex-direction:column;gap:8px;}
+.pr{display:flex;align-items:center;gap:11px;padding:11px 14px;
+  background:rgba(255,255,255,.03);border-radius:11px;border:1px solid var(--glass-border);
+  transition:all .2s;cursor:pointer;}
+.pr:hover{background:rgba(76,175,80,.07);transform:translateX(4px);}
+.pr-icon{font-size:17px;width:26px;text-align:center;}
+.pr-name{flex:1;font-size:12.5px;font-weight:500;}
+.pr-loc{font-size:10.5px;color:var(--muted);}
+.pr-sched{font-size:11px;color:var(--muted);white-space:nowrap;}
+.pr-type{font-size:10px;padding:2px 9px;border-radius:8px;
+  background:rgba(76,175,80,.1);color:var(--accent);border:1px solid rgba(76,175,80,.2);white-space:nowrap;}
+
+/* ── DONATION FLOW ── */
+.flow-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.flow-card{background:var(--card-bg);border:1px solid var(--glass-border);border-radius:14px;
+  padding:16px;text-align:center;transition:all .3s;}
+.flow-card:hover{border-color:rgba(76,175,80,.3);box-shadow:0 10px 30px rgba(0,0,0,.3);}
+.flow-num{font-size:36px;font-weight:900;color:var(--accent);line-height:1;}
+.flow-lbl{font-size:12px;color:var(--muted);margin-top:6px;}
+.flow-icon{font-size:22px;margin-bottom:8px;}
+
+/* ── IOT STATUS ── */
+.iot-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px;}
+.iot-card{background:var(--card-bg);border:1px solid var(--glass-border);border-radius:14px;padding:16px;}
+.iot-label{font-size:11px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px;}
+.iot-val{font-size:24px;font-weight:800;}
+.iot-val.green{color:var(--accent);}
+.iot-val.gold{color:var(--gold);}
+.iot-val.blue{color:var(--info);}
+.iot-sub{font-size:11px;color:var(--muted);margin-top:4px;}
+
+/* ── MONTHLY CHART ── */
+.chart-area{padding:10px 0;}
+.chart-bars{display:flex;align-items:flex-end;gap:10px;height:160px;padding:0 4px;}
+.chart-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;}
+.c-bar{width:100%;border-radius:7px 7px 0 0;background:var(--ggreen);opacity:.8;
+  transition:height 1.2s ease,opacity .2s;cursor:pointer;min-height:4px;}
+.c-bar:hover{opacity:1;box-shadow:0 0 14px rgba(76,175,80,.5);}
+.c-label{font-size:10.5px;color:var(--muted);text-align:center;}
+.c-val{font-size:10px;color:var(--accent);font-weight:600;}
+
+/* ── CERTIFICATE MINI ── */
+.cert-list{display:flex;flex-direction:column;gap:8px;}
+.cert-row{display:flex;align-items:center;gap:11px;padding:11px 14px;
+  background:rgba(255,255,255,.03);border-radius:11px;border:1px solid var(--glass-border);
+  transition:all .2s;}
+.cert-row:hover{background:rgba(76,175,80,.07);}
+.cert-icon{font-size:20px;width:26px;text-align:center;}
+.cert-info{flex:1;}
+.cert-name{font-size:12.5px;font-weight:600;}
+.cert-detail{font-size:10.5px;color:var(--muted);margin-top:1px;}
+.cert-btn{font-size:10.5px;padding:5px 13px;border-radius:8px;
+  background:rgba(76,175,80,.12);border:1px solid rgba(76,175,80,.3);
+  color:var(--accent);cursor:pointer;transition:all .2s;font-family:'Poppins',sans-serif;font-weight:600;}
+.cert-btn:hover{background:rgba(76,175,80,.25);}
+
+/* ── QUICK ACTIONS ── */
+.qa-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px;}
+.qa{background:var(--card-bg);border:1px solid var(--glass-border);border-radius:14px;
+  padding:16px;text-align:center;cursor:pointer;transition:all .25s;}
+.qa:hover{transform:translateY(-4px);border-color:rgba(76,175,80,.3);
+  box-shadow:0 12px 30px rgba(0,0,0,.3);}
+.qa-icon{font-size:26px;margin-bottom:8px;display:block;}
+.qa-lbl{font-size:11.5px;font-weight:600;color:var(--muted);}
+.qa:hover .qa-lbl{color:var(--white);}
+
+/* ── ALERTS ── */
+.alert-list{display:flex;flex-direction:column;gap:8px;}
+.alert-row{display:flex;align-items:flex-start;gap:11px;padding:12px 14px;
+  border-radius:11px;border-left:3px solid;}
+.alert-row.warn{background:rgba(255,167,38,.07);border-color:var(--warning);}
+.alert-row.danger{background:rgba(239,83,80,.07);border-color:var(--danger);}
+.alert-row.info{background:rgba(41,182,246,.07);border-color:var(--info);}
+.alert-icon{font-size:16px;margin-top:1px;}
+.alert-body h5{font-size:12.5px;font-weight:700;}
+.alert-body p{font-size:11.5px;color:var(--muted);margin-top:2px;}
+.alert-time{font-size:10.5px;color:var(--muted);white-space:nowrap;margin-left:auto;}
+
+/* ── FOOTER ── */
+.site-footer{background:rgba(10,22,40,.98);border-top:1px solid var(--glass-border);
+  padding:30px 28px 20px;position:relative;z-index:1;}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:32px;max-width:1440px;margin:0 auto 24px;}
+.fg-brand h3{font-size:16px;font-weight:800;margin-bottom:8px;color:#fff;}
+.fg-brand p{font-size:12px;color:var(--muted);line-height:1.6;}
+.fg-col h4{font-size:12.5px;font-weight:700;margin-bottom:12px;color:var(--accent);}
+.fg-col a{display:block;font-size:12px;color:var(--muted);text-decoration:none;
+  margin-bottom:7px;transition:color .2s;}
+.fg-col a:hover{color:var(--white);}
+.footer-bottom{max-width:1440px;margin:0 auto;padding-top:18px;
+  border-top:1px solid var(--glass-border);
+  display:flex;justify-content:space-between;align-items:center;font-size:11.5px;color:var(--muted);}
+.footer-bottom span{color:var(--accent);}
+
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:3000;
+  display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal{background:#13213a;border:1px solid rgba(76,175,80,.2);border-radius:20px;
+  padding:28px;width:420px;max-width:90vw;transform:scale(.95);transition:transform .3s;}
+.modal-overlay.open .modal{transform:scale(1);}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
+.modal-head h3{font-size:16px;font-weight:700;}
+.modal-close{background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;transition:color .2s;}
+.modal-close:hover{color:#fff;}
+.modal-info{font-size:12.5px;color:var(--muted);line-height:1.7;margin-bottom:14px;}
+.modal-pay{display:flex;flex-direction:column;gap:9px;}
+.mp-row{display:flex;align-items:center;justify-content:space-between;
+  padding:11px 15px;border-radius:12px;border:1px solid var(--glass-border);
+  background:rgba(255,255,255,.04);}
+.mp-left{display:flex;align-items:center;gap:10px;}
+.mp-logo{width:44px;height:26px;border-radius:6px;display:flex;align-items:center;
+  justify-content:center;font-size:11px;font-weight:800;}
+.mp-bkash{background:#E2136E;color:#fff;}
+.mp-nagad{background:#F15A24;color:#fff;}
+.mp-upay{background:#2196F3;color:#fff;}
+.mp-info span{display:block;}
+.mp-info .name{font-size:13px;font-weight:600;}
+.mp-info .num{font-size:11px;color:var(--muted);}
+.mp-link{font-size:12px;color:var(--accent);text-decoration:none;font-weight:600;
+  display:flex;align-items:center;gap:5px;padding:6px 13px;border-radius:8px;
+  border:1px solid rgba(76,175,80,.3);transition:all .2s;}
+.mp-link:hover{background:rgba(76,175,80,.15);}
+
+/* ── TOAST ── */
+.toast-wrap{position:fixed;bottom:24px;right:24px;z-index:5000;display:flex;flex-direction:column;gap:8px;}
+.toast{background:#1A2744;border:1px solid rgba(76,175,80,.3);border-radius:12px;
+  padding:13px 18px;display:flex;align-items:center;gap:10px;min-width:280px;
+  box-shadow:0 8px 24px rgba(0,0,0,.4);
+  animation:slideIn .4s cubic-bezier(.34,1.56,.64,1);font-size:13px;}
+.toast i{color:var(--accent);font-size:16px;}
+@keyframes slideIn{from{transform:translateX(60px);opacity:0;}to{transform:none;opacity:1;}}
+
+/* ── ANIMS ── */
+@keyframes fadeD{from{opacity:0;transform:translateY(-14px);}to{opacity:1;transform:none;}}
+@keyframes fadeU{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:none;}}
+.scard:nth-child(1){animation-delay:.04s} .scard:nth-child(2){animation-delay:.08s}
+.scard:nth-child(3){animation-delay:.12s} .scard:nth-child(4){animation-delay:.16s}
+.scard:nth-child(5){animation-delay:.20s}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1100px){.stats-row{grid-template-columns:repeat(3,1fr);}.main-grid{grid-template-columns:1fr;}}
+@media(max-width:780px){
+  .nav-links{display:none;}.nav-toggle{display:block;}
+  .stats-row{grid-template-columns:1fr 1fr;}
+  .impact-grid{grid-template-columns:1fr 1fr;}
+  .qa-grid{grid-template-columns:1fr 1fr;}
+  .flow-grid{grid-template-columns:1fr;}
+  .iot-grid{grid-template-columns:1fr 1fr;}
+  .footer-grid{grid-template-columns:1fr;}
+  .footer-bottom{flex-direction:column;gap:8px;text-align:center;}
+}
+@media(max-width:480px){
+  .stats-row{grid-template-columns:1fr;}
+  .wrapper{padding:14px 12px 48px;}
+  .navbar{padding:0 14px;}
+  .impact-grid{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- Particles Canvas -->
+<canvas id="particles"></canvas>
+
+<!-- ── NOTIFICATION PANEL ── -->
+<div class="notif-panel" id="notifPanel">
+  <div class="notif-header">
+    <h4><i class="fas fa-bell" style="color:var(--accent)"></i> Notifications</h4>
+    <span onclick="markAllRead()">Mark all read</span>
+  </div>
+  <div class="notif-list">
+    <div class="notif-item unread">
+      <div class="ni-icon ni-red"><i class="fas fa-exclamation-triangle" style="color:#EF5350"></i></div>
+      <div class="ni-body">
+        <div class="ni-title">BIN-004 Is Almost Full (90%)</div>
+        <div class="ni-sub">City Corporation bin needs collection urgently</div>
+        <div class="ni-time">2 minutes ago</div>
+      </div>
+      <div class="unread-dot"></div>
+    </div>
+    <div class="notif-item unread">
+      <div class="ni-icon ni-green"><i class="fas fa-trophy" style="color:#4CAF50"></i></div>
+      <div class="ni-body">
+        <div class="ni-title">Sumaiya Khan earned Silver Badge!</div>
+        <div class="ni-sub">She reached 200 coins milestone</div>
+        <div class="ni-time">18 minutes ago</div>
+      </div>
+      <div class="unread-dot"></div>
+    </div>
+    <div class="notif-item unread">
+      <div class="ni-icon ni-gold"><i class="fas fa-coins" style="color:#FFD700"></i></div>
+      <div class="ni-body">
+        <div class="ni-title">Revenue Updated: ৳0 Total</div>
+        <div class="ni-sub">GreenCycle Bangladesh collected 4.2 kg</div>
+        <div class="ni-time">45 minutes ago</div>
+      </div>
+      <div class="unread-dot"></div>
+    </div>
+    <div class="notif-item">
+      <div class="ni-icon ni-blue"><i class="fas fa-pills" style="color:#29B6F6"></i></div>
+      <div class="ni-body">
+        <div class="ni-title">Medicine donation approved</div>
+        <div class="ni-sub">Paracetamol x50 sent to Chittagong General</div>
+        <div class="ni-time">2 hours ago</div>
+      </div>
+    </div>
+    <div class="notif-item">
+      <div class="ni-icon ni-green"><i class="fas fa-recycle" style="color:#4CAF50"></i></div>
+      <div class="ni-body">
+        <div class="ni-title">BIN-001 collection completed</div>
+        <div class="ni-sub">Private Cleaning Services collected 2.1 kg</div>
+        <div class="ni-time">5 hours ago</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── PAYMENT MODAL ── -->
+<div class="modal-overlay" id="payModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>💰 Revenue Withdrawal</h3>
+      <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-info">
+      Current Balance: <strong style="color:var(--gold)">৳ 0.00</strong><br>
+      Revenue is collected from recycling partners and distributed to social causes, team welfare, and system maintenance. Withdraw via your preferred mobile banking method below.
+    </div>
+    <div class="modal-pay">
+      <div class="mp-row">
+        <div class="mp-left">
+          <div class="mp-logo mp-bkash">bKash</div>
+          <div class="mp-info">
+            <span class="name">bKash</span>
+            <span class="num">8801885134402 · Merchant</span>
+          </div>
+        </div>
+        <a href="https://www.bkash.com" target="_blank" class="mp-link"><i class="fas fa-external-link-alt"></i> Open</a>
+      </div>
+      <div class="mp-row">
+        <div class="mp-left">
+          <div class="mp-logo mp-nagad">Nagad</div>
+          <div class="mp-info">
+            <span class="name">Nagad</span>
+            <span class="num">8801885134402 · Merchant</span>
+          </div>
+        </div>
+        <a href="https://nagad.com.bd" target="_blank" class="mp-link"><i class="fas fa-external-link-alt"></i> Open</a>
+      </div>
+      <div class="mp-row">
+        <div class="mp-left">
+          <div class="mp-logo mp-upay">Upay</div>
+          <div class="mp-info">
+            <span class="name">(Upay)</span>
+            <span class="num">8801885134402· Merchant</span>
+          </div>
+        </div>
+        <a href="https://www.upaybd.com" target="_blank" class="mp-link"><i class="fas fa-external-link-alt"></i> Open</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOAST CONTAINER ── -->
+<div class="toast-wrap" id="toastWrap"></div>
+
+<!-- ── NAVBAR ── -->
+<nav class="navbar main-z">
+  <a class="brand" href="index.html">
+    <div class="brand-icon">♻️</div>
+    <div>
+      <span class="brand-text">PUC <span>EcoHealth</span> Hub</span>
+      <span class="brand-sub">Smart Waste Management · PUC</span>
+    </div>
+  </a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="index.html" class="active"><i class="fas fa-chart-pie"></i> Dashboard</a></li>
+    <li><a href="profile.html"><i class="fas fa-user-circle"></i> Profile</a></li>
+    <li><a href="bins.html"><i class="fas fa-trash-alt"></i> Smart Bins</a></li>
+    <li><a href="revenue.html"><i class="fas fa-coins"></i> Revenue</a></li>
+    <li><a href="#"><i class="fas fa-cog"></i> Settings</a></li>
+  </ul>
+  <div class="nav-right">
+    <div class="nav-btn" onclick="toggleNotif()" title="Notifications">
+      <i class="fas fa-bell"></i>
+      <span class="badge-dot">3</span>
+    </div>
+    <div class="nav-btn" onclick="openModal()" title="Revenue / Payments">
+      <i class="fas fa-wallet"></i>
+    </div>
+    <div class="nav-btn" title="Language">
+      <i class="fas fa-globe"></i>
+    </div>
+    <div class="avatar" title="Rahul Singha">PEH</div>
+    <button class="nav-toggle" onclick="toggleNav()"><i class="fas fa-bars"></i></button>
+  </div>
+</nav>
+
+<!-- ── TICKER ── -->
+<div class="ticker-bar main-z">
+  <div class="ticker-inner">
+    <span><i class="fas fa-recycle"></i>BIN-002: 65% Full – Collection Scheduled</span>
+    <span><i class="fas fa-trophy"></i>Rahul Singha: 220 Coins – #1 Eco Warrior</span>
+    <span><i class="fas fa-leaf"></i>25 kg CO₂ Reduced This Month</span>
+    <span><i class="fas fa-pills"></i>89 Medicine Donations Processed</span>
+    <span><i class="fas fa-truck"></i>GreenCycle BD Collection: Today 10 AM</span>
+    <span><i class="fas fa-wallet"></i>Revenue Balance: ৳ 0.00 – System Live</span>
+    <span><i class="fas fa-recycle"></i>BIN-002: 65% Full – Collection Scheduled</span>
+    <span><i class="fas fa-trophy"></i>Rahul Singha: 220 Coins – #1 Eco Warrior</span>
+    <span><i class="fas fa-leaf"></i>25 kg CO₂ Reduced This Month</span>
+    <span><i class="fas fa-pills"></i>89 Medicine Donations Processed</span>
+    <span><i class="fas fa-truck"></i>GreenCycle BD Collection: Today 10 AM</span>
+    <span><i class="fas fa-wallet"></i>Revenue Balance: ৳ 0.00 – System Live</span>
+  </div>
+</div>
+
+<!-- ── MAIN ── -->
+<div class="wrapper main-z">
+
+  <!-- Page Header -->
+  <div class="page-head">
+    <div class="ph-left">
+      <h1>📊 Dashboard Overview</h1>
+      <p>Welcome back, <span>Rahul Singha</span> &nbsp;·&nbsp; Premier University Chittagong &nbsp;·&nbsp; CSE Department &nbsp;·&nbsp; Lead Developer</p>
+    </div>
+    <div class="ph-right">
+      <div class="live-badge"><span class="live-dot"></span> Live Updates Active</div>
+      <div class="date-badge" id="dateNow">Loading date...</div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="qa-grid">
+    <div class="qa" onclick="showToast('Deposit E-Waste feature coming soon!','fa-recycle')">
+      <span class="qa-icon">🗑️</span><div class="qa-lbl">Deposit E-Waste</div>
+    </div>
+    <div class="qa" onclick="showToast('Medicine Donation portal opening...','fa-pills')">
+      <span class="qa-icon">💊</span><div class="qa-lbl">Donate Medicine</div>
+    </div>
+    <div class="qa" onclick="openModal()">
+      <span class="qa-icon">💰</span><div class="qa-lbl">Revenue / Payments</div>
+    </div>
+    <div class="qa" onclick="showToast('Certificate download starting...','fa-certificate')">
+      <span class="qa-icon">📜</span><div class="qa-lbl">My Certificates</div>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="scard g">
+      <div class="sc-icon"><i class="fas fa-recycle"></i></div>
+      <div class="sc-val"><span class="counter" data-target="125" data-dec="1">0</span><span style="font-size:15px"> kg</span></div>
+      <div class="sc-lbl">Total E-Waste Deposited</div>
+      <div class="sc-trend trend-up"><i class="fas fa-arrow-up"></i> +2.3 kg this week</div>
+      <div class="sc-sparkline" id="spark1"></div>
+    </div>
+    <div class="scard go">
+      <div class="sc-icon"><i class="fas fa-users"></i></div>
+      <div class="sc-val"><span class="counter" data-target="156">0</span></div>
+      <div class="sc-lbl">Active Users This Month</div>
+      <div class="sc-trend trend-up"><i class="fas fa-arrow-up"></i> +12 new users</div>
+      <div class="sc-sparkline" id="spark2"></div>
+    </div>
+    <div class="scard b">
+      <div class="sc-icon"><i class="fas fa-pills"></i></div>
+      <div class="sc-val"><span class="counter" data-target="89">0</span></div>
+      <div class="sc-lbl">Medicine Donations</div>
+      <div class="sc-trend trend-up"><i class="fas fa-arrow-up"></i> +7 today</div>
+      <div class="sc-sparkline" id="spark3"></div>
+    </div>
+    <div class="scard t">
+      <div class="sc-icon"><i class="fas fa-trophy"></i></div>
+      <div class="sc-val"><span class="counter" data-target="45">0</span></div>
+      <div class="sc-lbl">Rewards Distributed</div>
+      <div class="sc-trend trend-up"><i class="fas fa-arrow-up"></i> +5 this week</div>
+      <div class="sc-sparkline" id="spark4"></div>
+    </div>
+    <div class="scard p">
+      <div class="sc-icon"><i class="fas fa-taka-sign"></i></div>
+      <div class="sc-val">৳ <span class="counter" data-target="0">0</span></div>
+      <div class="sc-lbl">Total Revenue (৳ BDT)</div>
+      <div class="sc-trend" style="color:#CE93D8"><i class="fas fa-info-circle"></i> System just launched</div>
+      <div class="sc-sparkline" id="spark5"></div>
+    </div>
+  </div>
+
+  <!-- IoT System Status -->
+  <div class="iot-grid">
+    <div class="iot-card">
+      <div class="iot-label">IoT Connection</div>
+      <div class="iot-val green">● Online</div>
+      <div class="iot-sub">ESP32 · Firebase RTDB · Live</div>
+    </div>
+    <div class="iot-card">
+      <div class="iot-label">Last Sync</div>
+      <div class="iot-val blue" id="lastSync">--:--:--</div>
+      <div class="iot-sub">Real-time sensor data</div>
+    </div>
+    <div class="iot-card">
+      <div class="iot-label">Active Bins</div>
+      <div class="iot-val gold">4 / 4</div>
+      <div class="iot-sub">All sensors responding</div>
+    </div>
+  </div>
+
+  <!-- System Alerts -->
+  <div class="sc2" style="margin-bottom:20px">
+    <div class="sh">
+      <div class="sh-title"><i class="fas fa-exclamation-circle"></i> System Alerts</div>
+      <span class="sh-badge red">3 Active</span>
+    </div>
+    <div class="alert-list">
+      <div class="alert-row danger">
+        <div class="alert-icon">🔴</div>
+        <div class="alert-body">
+          <h5>BIN-004 Critical – 90% Full</h5>
+          <p>Chittagong City Corporation bin needs immediate collection. Bangladesh Recycling Industries notified.</p>
+        </div>
+        <div class="alert-time">2 min ago</div>
+      </div>
+      <div class="alert-row warn">
+        <div class="alert-icon">🟡</div>
+        <div class="alert-body">
+          <h5>BIN-002 at 65% Capacity</h5>
+          <p>PUC Campus B bin – GreenCycle Bangladesh collection scheduled for Tuesday.</p>
+        </div>
+        <div class="alert-time">45 min ago</div>
+      </div>
+      <div class="alert-row info">
+        <div class="alert-icon">🔵</div>
+        <div class="alert-body">
+          <h5>Medicine Donation Batch Ready</h5>
+          <p>16 medicine packages queued for distribution to Chittagong General Hospital.</p>
+        </div>
+        <div class="alert-time">2 hrs ago</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Grid -->
+  <div class="main-grid">
+    <div class="left-col">
+
+      <!-- Smart Bin Status -->
+      <div class="sc2">
+        <div class="sh">
+          <div class="sh-title"><i class="fas fa-map-marker-alt"></i> Live Smart Bin Status</div>
+          <button class="view-all" onclick="location.href='bins.html'">Manage Bins <i class="fas fa-chevron-right"></i></button>
+        </div>
+        <div class="bin-list">
+          <div class="bin-row">
+            <div class="bin-emoji">🗑️</div>
+            <div class="bin-info">
+              <div class="bin-name">BIN-001 · PUC Campus A</div>
+              <div class="bin-loc"><i class="fas fa-map-pin" style="font-size:10px;color:var(--accent)"></i> Hazarighat, Chittagong</div>
+              <div class="bin-collector"><i class="fas fa-truck" style="font-size:9px"></i> City Corporation · Daily 6:00 AM</div>
+            </div>
+            <div class="bin-r">
+              <span class="bst empty">🟢 Empty · 0%</span>
+              <div class="bbar"><div class="bfill g" style="width:0%"></div></div>
+              <button class="req-btn">Schedule</button>
+            </div>
+          </div>
+          <div class="bin-row">
+            <div class="bin-emoji">🗑️</div>
+            <div class="bin-info">
+              <div class="bin-name">BIN-002 · PUC Campus B</div>
+              <div class="bin-loc"><i class="fas fa-map-pin" style="font-size:10px;color:var(--warning)"></i> Chittagong University Campus</div>
+              <div class="bin-collector"><i class="fas fa-truck" style="font-size:9px"></i> GreenCycle Bangladesh · Tue, Thu, Sat</div>
+            </div>
+            <div class="bin-r">
+              <span class="bst mid">🟡 Partial · 65%</span>
+              <div class="bbar"><div class="bfill o" style="width:65%"></div></div>
+              <button class="req-btn" onclick="showToast('Collection request sent!','fa-check')">Request</button>
+            </div>
+          </div>
+          <div class="bin-row">
+            <div class="bin-emoji">🗑️</div>
+            <div class="bin-info">
+              <div class="bin-name">BIN-003 · Hazarighat Point</div>
+              <div class="bin-loc"><i class="fas fa-map-pin" style="font-size:10px;color:var(--warning)"></i> Hazarighat, Chittagong</div>
+              <div class="bin-collector"><i class="fas fa-truck" style="font-size:9px"></i> Private Cleaning Services · Mon–Sat 8 AM</div>
+            </div>
+            <div class="bin-r">
+              <span class="bst mid">🟡 Partial · 45%</span>
+              <div class="bbar"><div class="bfill o" style="width:45%"></div></div>
+              <button class="req-btn">Schedule</button>
+            </div>
+          </div>
+          <div class="bin-row">
+            <div class="bin-emoji">🗑️</div>
+            <div class="bin-info">
+              <div class="bin-name">BIN-004 · City Corporation</div>
+              <div class="bin-loc"><i class="fas fa-map-pin" style="font-size:10px;color:var(--danger)"></i> Chittagong City Corporation Office</div>
+              <div class="bin-collector"><i class="fas fa-truck" style="font-size:9px"></i> Bangladesh Recycling Industries · Mon, Wed, Fri</div>
+            </div>
+            <div class="bin-r">
+              <span class="bst full">🔴 Critical · 90%</span>
+              <div class="bbar"><div class="bfill r" style="width:90%"></div></div>
+              <button class="req-btn" style="border-color:rgba(239,83,80,.4);color:var(--danger);background:rgba(239,83,80,.08)" onclick="showToast('URGENT: Collection request sent!','fa-exclamation-triangle')">URGENT</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Monthly Chart -->
+      <div class="sc2">
+        <div class="sh">
+          <div class="sh-title"><i class="fas fa-chart-bar"></i> Monthly Collection (kg)</div>
+          <span class="sh-badge">2024</span>
+        </div>
+        <div class="chart-area">
+          <div class="chart-bars" id="chartBars"></div>
+        </div>
+      </div>
+
+      <!-- Recent Activity -->
+      <div class="sc2">
+        <div class="sh">
+          <div class="sh-title"><i class="fas fa-history"></i> Recent Activity Feed</div>
+          <span class="sh-badge">Live</span>
+        </div>
+        <div class="act-list">
+          <div class="act-row">
+            <div class="act-dot ad-g"></div>
+            <div class="act-line"></div>
+            <div class="act-body">
+              <div class="act-txt"><strong>Rahul Singha</strong> deposited an old phone at BIN-001 (PUC Campus A)</div>
+              <div class="act-meta"><span class="act-time"><i class="fas fa-clock" style="font-size:9px"></i> 10:30 AM</span><span class="act-coins">+10 coins</span><span class="act-tag">E-Waste</span></div>
+            </div>
+          </div>
+          <div class="act-row">
+            <div class="act-dot ad-o"></div>
+            <div class="act-line"></div>
+            <div class="act-body">
+              <div class="act-txt"><strong>Md. Imran</strong> donated 30 tablets of Paracetamol → Chittagong General Hospital</div>
+              <div class="act-meta"><span class="act-time">10:15 AM</span><span class="act-coins" style="color:var(--info)">+5 coins</span><span class="act-tag">Medicine</span></div>
+            </div>
+          </div>
+          <div class="act-row">
+            <div class="act-dot ad-b"></div>
+            <div class="act-line"></div>
+            <div class="act-body">
+              <div class="act-txt"><strong>BIN-002</strong> reached 65% capacity — GreenCycle Bangladesh auto-notified</div>
+              <div class="act-meta"><span class="act-time">09:45 AM</span><span class="act-coins" style="color:var(--info)">Alert sent</span></div>
+            </div>
+          </div>
+          <div class="act-row">
+            <div class="act-dot ad-p"></div>
+            <div class="act-line"></div>
+            <div class="act-body">
+              <div class="act-txt"><strong>Sumaiya Khan</strong> earned 🥈 Silver Badge — downloaded certificate</div>
+              <div class="act-meta"><span class="act-time">09:20 AM</span><span class="act-coins" style="color:#CE93D8">+15 coins</span><span class="act-tag">Reward</span></div>
+            </div>
+          </div>
+          <div class="act-row">
+            <div class="act-dot ad-g"></div>
+            <div class="act-line"></div>
+            <div class="act-body">
+              <div class="act-txt"><strong>GreenCycle Bangladesh</strong> collected 4.2 kg from BIN-003 (Hazarighat)</div>
+              <div class="act-meta"><span class="act-time">08:00 AM</span><span class="act-coins" style="color:var(--gold)">Revenue: ৳ 0</span><span class="act-tag">Collection</span></div>
+            </div>
+          </div>
+          <div class="act-row">
+            <div class="act-dot ad-o"></div>
+            <div class="act-line"></div>
+            <div class="act-body">
+              <div class="act-txt"><strong>Fatema Akter</strong> registered as new Eco Warrior — joined PUC EcoHealth Hub</div>
+              <div class="act-meta"><span class="act-time">07:30 AM</span><span class="act-coins">+5 welcome coins</span><span class="act-tag">New User</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Certificates -->
+      <div class="sc2">
+        <div class="sh">
+          <div class="sh-title"><i class="fas fa-certificate"></i> Certificates &amp; Rewards</div>
+          <button class="view-all" onclick="location.href='profile.html'">Full Profile <i class="fas fa-chevron-right"></i></button>
+        </div>
+        <div class="cert-list">
+          <div class="cert-row">
+            <div class="cert-icon">🥉</div>
+            <div class="cert-info">
+              <div class="cert-name">Bronze Eco Warrior Certificate</div>
+              <div class="cert-detail">Rahul Singha · E-Waste Deposit Achievement · 100 Coins</div>
+            </div>
+            <button class="cert-btn" onclick="showToast('Downloading Bronze Certificate...','fa-download')"><i class="fas fa-download"></i> Download</button>
+          </div>
+          <div class="cert-row">
+            <div class="cert-icon">🥈</div>
+            <div class="cert-info">
+              <div class="cert-name">Silver Eco Warrior Certificate</div>
+              <div class="cert-detail">Rahul Singha · Medicine Donation Achievement · 200 Coins</div>
+            </div>
+            <button class="cert-btn" onclick="showToast('Downloading Silver Certificate...','fa-download')"><i class="fas fa-download"></i> Download</button>
+          </div>
+          <div class="cert-row" style="opacity:.5">
+            <div class="cert-icon">🥇</div>
+            <div class="cert-info">
+              <div class="cert-name">Gold Eco Warrior Certificate</div>
+              <div class="cert-detail">Locked – Need 300 coins · Current: 220 coins</div>
+            </div>
+            <button class="cert-btn" style="opacity:.4;cursor:not-allowed">🔒 Locked</button>
+          </div>
+          <div class="cert-row" style="opacity:.4">
+            <div class="cert-icon">👑</div>
+            <div class="cert-info">
+              <div class="cert-name">ECO CHAMPION Certificate</div>
+              <div class="cert-detail">Locked – Need 500 coins · Current: 220 coins</div>
+            </div>
+            <button class="cert-btn" style="opacity:.4;cursor:not-allowed">🔒 Locked</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT COLUMN -->
+    <div class="right-col">
+
+      <!-- Leaderboard -->
+      <div class="sc2">
+        <div class="sh">
+          <div class="sh-title"><i class="fas fa-trophy"></i> Top Eco Warriors</div>
+          <span class="sh-badge gold">This Month</span>
+        </div>
+        <div class="lb-list">
+          <div class="lb-row top1">
+            <div class="lb-rank">🥇</div>
+            <div class="lb-av av-gold">RS</div>
+            <div class="lb-info">
+              <div class="lb-name">Rahul Singha <span class="active-tag">Active</span></div>
+              <div class="lb-dept">CSE · Premier Univ.</div>
+            </div>
+            <div class="lb-right">
+              <div class="lb-coins"><i class="fas fa-coins" style="font-size:11px"></i> 220</div>
+              <div class="lb-bar-wrap"><div class="lb-bar-fill" style="width:88%"></div></div>
+            </div>
+          </div>
+          <div class="lb-row">
+            <div class="lb-rank">🥈</div>
+            <div class="lb-av av-silver">SK</div>
+            <div class="lb-info">
+              <div class="lb-name">Sumaiya Khan</div>
+              <div class="lb-dept">EEE · Premier Univ.</div>
+            </div>
+            <div class="lb-right">
+              <div class="lb-coins"><i class="fas fa-coins" style="font-size:11px"></i> 180</div>
+              <div class="lb-bar-wrap"><div class="lb-bar-fill" style="width:72%"></div></div>
+            </div>
+          </div>
+          <div class="lb-row">
+            <div class="lb-rank">🥉</div>
+            <div class="lb-av av-bronze">MI</div>
+            <div class="lb-info">
+              <div class="lb-name">Md. Imran</div>
+              <div class="lb-dept">BBA · Premier Univ.</div>
+            </div>
+            <div class="lb-right">
+              <div class="lb-coins"><i class="fas fa-coins" style="font-size:11px"></i> 150</div>
+              <div class="lb-bar-wrap"><div class="lb-bar-fill" style="width:60%"></div></div>
+            </div>
+          </div>
+          <div class="lb-row">
+            <div class="lb-rank" style="font-size:12px;color:var(--muted)">#4</div>
+            <div class="lb-av av-blue">FA</div>
+            <div class="lb-info">
+              <div class="lb-name">Fatema Akter</div>
+              <div class="lb-dept">CSE · Premier Univ.</div>
+            </div>
+            <div class="lb-right">
+              <div class="lb-coins"><i class="fas fa-coins" style="font-size:11px"></i> 120</div>
+              <div class="lb-bar-wrap"><div class="lb-bar-fill" style="width:48%"></div></div>
+            </div>
+          </div>
+          <div class="lb-row">
+            <div class="lb-rank" style="font-size:12px;color:var(--muted)">#5</div>
+            <div class="lb-av av-teal">TH</div>
+            <div class="lb-info">
+              <div class="lb-name">Tanvir Hasan</div>
+              <div class="lb-dept">ME · Premier Univ.</div>
+            </div>
+            <div class="lb-right">
+              <div class="lb-coins"><i class="fas fa-coins" style="font-size:11px"></i> 95</div>
+              <div class="lb-bar-wrap"><div class="lb-bar-fill" style="width:38%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Revenue Card -->
+      <div class="sc2 rev-card">
+        <div class="sh">
+          <div class="sh-title"><i class="fas fa-taka-sign"></i> Revenue Dashboard</div>
+          <span class="sh-badge gold">৳ BDT</span>
+        </div>
+        <div class="rev-sub">Total from E-Waste Recycling &amp; Medicine</div>
+        <div class="rev-total"><span class="rev-currency">৳</span><span class="counter" data-target="0">0</span>.00</div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:14px">Platform just launched · Revenue accumulating...</div>
+        <div class="pay-methods">
+          <div class="pay-row" onclick="openModal()">
+            <div class="pay-left">
+              <div class="pay-logo pl-bkash">bKash</div>
+              <div><div class="pay-name">bKash</div><div class="pay-num">Mobile Banking · Merchant</div></div>
+            </div>
+            <a href="https://www.bkash.com" target="_blank" class="pay-link" onclick="event.stopPropagation()"><i class="fas fa-external-link-alt"></i> Open</a>
+          </div>
+          <div class="pay-row" onclick="openModal()">
+            <div class="pay-left">
+              <div class="pay-logo pl-nagad">Nagad</div>
+              <div><div class="pay-name">Nagad</div><div class="pay-num">Digital Financial Service</div></div>
+            </div>
+            <a href="https://nagad.com.bd" target="_blank" class="pay-link" onclick="event.stopPropagation()"><i class="fas fa-external-link-alt"></i> Open</a>
+          </div>
+          <div class="pay-row" onclick="openModal()">
+            <div class="pay-left">
+              <div class="pay-logo pl-upay">Upay</div>
+              <div><div class="pay-name">উপায় (Upay)</div><div class="pay-num">UCB Mobile Banking</div></div>
+            </div>
+            <a href="https://www.upaybd.com" target="_blank" class="pay-link" onclick="event.stopPropagation()"><i class="fas fa-external-link-alt"></i> Open</a>
+          </div>
+        </div>
+        <div class="rev-bars">
+          <div class="rb-row">
+            <div class="rb-lbl"><span>🌿 Social Causes (40%)</span><span>৳ 0</span></div>
+            <div class="rb"><div class="rb-fill rb-40"></div></div>
+          </div>
+          <div class="rb-row">
+            <div class="rb-lbl"><span>👥 Team Welfare (30%)</span><span>৳ 0</span></div>
+            <div class="rb"><div class="rb-fill rb-30a"></div></div>
+          </div>
+          <div class="rb-row">
+            <div class="rb-lbl"><span>⚙️ System Maint. (30%)</span><span>৳ 0</span></div>
+            <div class="rb"><div class="rb-fill rb-30b"></div></div>
+          </div>
+        </div>
+        <button onclick="location.href='revenue.html'" style="width:100%;margin-top:16px;padding:10px;background:rgba(76,175,80,.15);border:1px solid rgba(76,175,80,.3);border-radius:10px;color:var(--accent);font-size:12.5px;font-weight:700;cursor:pointer;transition:all .2s;font-family:'Poppins',sans-serif" onmouseover="this.style.background='rgba(76,175,80,.28)'" onmouseout="this.style.background='rgba(76,175,80,.15)'">
+          View Full Revenue Dashboard →
+        </button>
+      </div>
+
+      <!-- Partners -->
+      <div class="sc2">
+        <div class="sh">
+          <div class="sh-title"><i class="fas fa-handshake"></i> Recycling Partners</div>
+          <button class="view-all" onclick="location.href='revenue.html'">All Partners <i class="fas fa-chevron-right"></i></button>
+        </div>
+        <div class="partner-list">
+          <div class="pr">
+            <div class="pr-icon">♻️</div>
+            <div style="flex:1">
+              <div class="pr-name">Bangladesh Recycling Industries Ltd</div>
+              <div class="pr-loc">Chittagong Industrial Zone</div>
+            </div>
+            <div class="pr-sched">Mon,Wed,Fri</div>
+            <span class="pr-type">E-Waste</span>
+          </div>
+          <div class="pr">
+            <div class="pr-icon">🌿</div>
+            <div style="flex:1">
+              <div class="pr-name">GreenCycle Bangladesh</div>
+              <div class="pr-loc">Hazarighat, Chittagong</div>
+            </div>
+            <div class="pr-sched">Tue,Thu,Sat</div>
+            <span class="pr-type">E-Waste</span>
+          </div>
+          <div class="pr">
+            <div class="pr-icon">🏛️</div>
+            <div style="flex:1">
+              <div class="pr-name">City Corporation Waste Mgmt</div>
+              <div class="pr-loc">Chittagong City Corp.</div>
+            </div>
+            <div class="pr-sched">Daily 6AM</div>
+            <span class="pr-type">Mixed</span>
+          </div>
+          <div class="pr">
+            <div class="pr-icon">🚛</div>
+            <div style="flex:1">
+              <div class="pr-name">Private Cleaning Services Ltd</div>
+              <div class="pr-loc">Hazarighat Area</div>
+            </div>
+            <div class="pr-sched">Mon–Sat</div>
+            <span class="pr-type">E-Waste</span>
+          </div>
+          <div class="pr">
+            <div class="pr-icon">💡</div>
+            <div style="flex:1">
+              <div class="pr-name">EcoRecycle Bangladesh</div>
+              <div class="pr-loc">Chittagong EPZ</div>
+            </div>
+            <div class="pr-sched">Wed,Fri</div>
+            <span class="pr-type">Electronics</span>
+          </div>
+          <div class="pr">
+            <div class="pr-icon">🏭</div>
+            <div style="flex:1">
+              <div class="pr-name">Chittagong Waste Treatment Plant</div>
+              <div class="pr-loc">Kalurghat, Chittagong</div>
+            </div>
+            <div class="pr-sched">Tue,Thu</div>
+            <span class="pr-type">Mixed</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Environmental Impact -->
+  <div class="sc2" style="margin-bottom:22px">
+    <div class="sh">
+      <div class="sh-title"><i class="fas fa-leaf"></i> Environmental Impact Tracker</div>
+      <span class="sh-badge">Cumulative</span>
+    </div>
+    <div class="impact-grid">
+      <div class="imp-card">
+        <span class="imp-emoji">🌳</span>
+        <div class="imp-val green"><span class="counter" data-target="2">0</span></div>
+        <div class="imp-lbl">Trees Saved</div>
+        <div class="imp-target">Target: 50/year</div>
+      </div>
+      <div class="imp-card">
+        <span class="imp-emoji">💧</span>
+        <div class="imp-val blue"><span class="counter" data-target="15000">0</span> L</div>
+        <div class="imp-lbl">Water Conserved</div>
+        <div class="imp-target">Target: 500,000 L/year</div>
+      </div>
+      <div class="imp-card">
+        <span class="imp-emoji">⚡</span>
+        <div class="imp-val gold"><span class="counter" data-target="75">0</span> kWh</div>
+        <div class="imp-lbl">Energy Saved</div>
+        <div class="imp-target">Target: 2,500 kWh/year</div>
+      </div>
+      <div class="imp-card">
+        <span class="imp-emoji">♻️</span>
+        <div class="imp-val teal"><span class="counter" data-target="25">0</span> kg</div>
+        <div class="imp-lbl">CO₂ Reduced</div>
+        <div class="imp-target">Target: 1,000 kg/year</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Donation Stats Flow -->
+  <div class="sc2">
+    <div class="sh">
+      <div class="sh-title"><i class="fas fa-chart-pie"></i> Donation Overview</div>
+      <span class="sh-badge">All Time</span>
+    </div>
+    <div class="flow-grid">
+      <div class="flow-card">
+        <div class="flow-icon">💊</div>
+        <div class="flow-num">89</div>
+        <div class="flow-lbl">Medicine Donations</div>
+      </div>
+      <div class="flow-card">
+        <div class="flow-icon">♻️</div>
+        <div class="flow-num">48</div>
+        <div class="flow-lbl">E-Waste Deposits</div>
+      </div>
+      <div class="flow-card">
+        <div class="flow-icon">🏥</div>
+        <div class="flow-num">6</div>
+        <div class="flow-lbl">Partner Hospitals</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── FOOTER ── -->
+<footer class="site-footer main-z">
+  <div class="footer-grid">
+    <div class="fg-brand">
+      <h3>♻️ PUC EcoHealth Hub</h3>
+      <p>Smart Medicine Donation &amp; E-Waste Recycling Platform built by PUC Waste Decoders team. Connecting communities, recyclers, and healthcare through technology.</p>
+      <div style="display:flex;gap:10px;margin-top:14px">
+        <a href="#" style="width:32px;height:32px;background:rgba(255,255,255,.06);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:13px;transition:all .2s" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--muted)'"><i class="fab fa-github"></i></a>
+        <a href="#" style="width:32px;height:32px;background:rgba(255,255,255,.06);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:13px;transition:all .2s" onmouseover="this.style.color='#1DA1F2'" onmouseout="this.style.color='var(--muted)'"><i class="fab fa-twitter"></i></a>
+        <a href="#" style="width:32px;height:32px;background:rgba(255,255,255,.06);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:13px;transition:all .2s" onmouseover="this.style.color='#0A66C2'" onmouseout="this.style.color='var(--muted)'"><i class="fab fa-linkedin"></i></a>
+        <a href="#" style="width:32px;height:32px;background:rgba(255,255,255,.06);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:13px;transition:all .2s" onmouseover="this.style.color='#1877F2'" onmouseout="this.style.color='var(--muted)'"><i class="fab fa-facebook"></i></a>
+      </div>
+    </div>
+    <div class="fg-col">
+      <h4>Navigation</h4>
+      <a href="index.html">Dashboard</a>
+      <a href="profile.html">User Profile</a>
+      <a href="bins.html">Smart Bins</a>
+      <a href="revenue.html">Revenue</a>
+      <a href="#">Settings</a>
+    </div>
+    <div class="fg-col">
+      <h4>Resources</h4>
+      <a href="#">API Docs</a>
+      <a href="#">User Guide</a>
+      <a href="#">Admin Manual</a>
+      <a href="#">IoT Setup</a>
+      <a href="#">Privacy Policy</a>
+    </div>
+    <div class="fg-col">
+      <h4>Contact</h4>
+      <a href="mailto:info@pucecohealth.com"><i class="fas fa-envelope" style="font-size:10px;margin-right:5px"></i> info@pucecohealth.com</a>
+      <a href="#"><i class="fas fa-map-marker-alt" style="font-size:10px;margin-right:5px"></i> Hazarighat, Chittagong</a>
+      <a href="#"><i class="fas fa-university" style="font-size:10px;margin-right:5px"></i> Premier University Chittagong</a>
+      <a href="https://www.bkash.com" target="_blank"><i class="fas fa-mobile-alt" style="font-size:10px;margin-right:5px"></i> bKash</a>
+      <a href="https://nagad.com.bd" target="_blank"><i class="fas fa-mobile-alt" style="font-size:10px;margin-right:5px"></i> Nagad</a>
+      <a href="https://www.upaybd.com" target="_blank"><i class="fas fa-mobile-alt" style="font-size:10px;margin-right:5px"></i> উপায় Upay</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div>© 2024 <span>PUC EcoHealth Hub</span> · PUC Waste Decoders · All Rights Reserved</div>
+    <div>Built with ❤️ by <span>Rahul Singha</span> · Premier University Chittagong · CSE</div>
+    <div><span>♻️</span> Making Bangladesh Greener</div>
+  </div>
+</footer>
+
+<!-- ── SCRIPTS ── -->
+<script>
+/* ── PARTICLES ── */
+const canvas=document.getElementById('particles');
+const ctx=canvas.getContext('2d');
+let W,H,pts=[];
+function resize(){W=canvas.width=innerWidth;H=canvas.height=innerHeight;}
+resize();window.addEventListener('resize',resize);
+function initPts(){pts=[];for(let i=0;i<60;i++)pts.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.5+.4,vx:(Math.random()-.5)*.4,vy:(Math.random()-.5)*.4,a:Math.random()*.5+.15});}
+initPts();
+function drawParticles(){
+  ctx.clearRect(0,0,W,H);
+  pts.forEach(p=>{
+    ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fillStyle=`rgba(76,175,80,${p.a})`;ctx.fill();
+    p.x+=p.vx;p.y+=p.vy;
+    if(p.x<0||p.x>W)p.vx*=-1;
+    if(p.y<0||p.y>H)p.vy*=-1;
+  });
+  pts.forEach((a,i)=>pts.slice(i+1).forEach(b=>{
+    const d=Math.hypot(a.x-b.x,a.y-b.y);
+    if(d<100){ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);
+      ctx.strokeStyle=`rgba(76,175,80,${.06*(1-d/100)})`;ctx.lineWidth=.5;ctx.stroke();}
+  }));
+  requestAnimationFrame(drawParticles);
+}
+drawParticles();
+
+/* ── DATE ── */
+function updateDate(){
+  const d=new Date();
+  document.getElementById('dateNow').textContent=d.toLocaleDateString('en-BD',{weekday:'short',year:'numeric',month:'short',day:'numeric'});
+  document.getElementById('lastSync').textContent=d.toLocaleTimeString('en-BD',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+updateDate();setInterval(updateDate,1000);
+
+/* ── COUNTER ANIMATION ── */
+function animateCounters(){
+  document.querySelectorAll('.counter').forEach(el=>{
+    const target=+el.dataset.target;
+    const dec=el.dataset.dec||0;
+    let current=0;
+    const step=target/(target>1000?80:40);
+    const timer=setInterval(()=>{
+      current=Math.min(current+step,target);
+      el.textContent=dec?current.toFixed(dec):Math.floor(current).toLocaleString();
+      if(current>=target)clearInterval(timer);
+    },20);
+  });
+}
+setTimeout(animateCounters,400);
+
+/* ── SPARKLINES ── */
+const sparkData=[[3,5,4,7,6,8,9],[80,90,100,120,140,150,156],[30,45,55,60,70,80,89],[15,20,25,30,35,40,45],[0,0,0,0,0,0,0]];
+['spark1','spark2','spark3','spark4','spark5'].forEach((id,i)=>{
+  const wrap=document.getElementById(id);
+  const max=Math.max(...sparkData[i]);
+  sparkData[i].forEach(v=>{
+    const b=document.createElement('div');
+    b.className='spark-bar';
+    b.style.cssText=`height:${max?Math.max(4,(v/max*28)):4}px;background:${i===3?'var(--gold)':i===1?'var(--gold)':i===2?'var(--info)':i===4?'#CE93D8':'var(--accent)'};`;
+    wrap.appendChild(b);
+  });
+});
+
+/* ── MONTHLY CHART ── */
+const months=['Jan','Feb','Mar','Apr','May','Jun'];
+const vals=[3.2,4.8,5.5,7.1,9.3,12.5];
+const max2=Math.max(...vals);
+const cb=document.getElementById('chartBars');
+months.forEach((m,i)=>{
+  const col=document.createElement('div');col.className='chart-col';
+  const bar=document.createElement('div');bar.className='c-bar';
+  bar.style.height='0px';
+  bar.title=`${m}: ${vals[i]} kg`;
+  setTimeout(()=>{bar.style.height=`${(vals[i]/max2)*140}px`;},300+i*80);
+  const lbl=document.createElement('div');lbl.className='c-label';lbl.textContent=m;
+  const val=document.createElement('div');val.className='c-val';val.textContent=vals[i]+'kg';
+  col.append(bar,val,lbl);cb.appendChild(col);
+});
+
+/* ── NAV TOGGLE ── */
+function toggleNav(){
+  const nl=document.getElementById('navLinks');
+  if(nl.style.display==='flex'){nl.style.display='none';}
+  else{nl.style.cssText='display:flex;flex-direction:column;position:absolute;top:66px;left:0;right:0;background:rgba(10,22,40,.98);padding:10px;gap:4px;z-index:999;border-bottom:1px solid rgba(255,255,255,.08)';}
+}
+
+/* ── NOTIFICATIONS ── */
+function toggleNotif(){
+  const p=document.getElementById('notifPanel');
+  p.classList.toggle('open');
+  if(p.classList.contains('open')){
+    document.querySelector('.badge-dot').style.display='none';
+  }
+}
+document.addEventListener('click',e=>{
+  const p=document.getElementById('notifPanel');
+  if(!p.contains(e.target)&&!e.target.closest('[onclick="toggleNotif()"]'))p.classList.remove('open');
+});
+function markAllRead(){
+  document.querySelectorAll('.notif-item.unread').forEach(el=>el.classList.remove('unread'));
+  document.querySelectorAll('.unread-dot').forEach(el=>el.remove());
+  showToast('All notifications marked as read','fa-check-circle');
+}
+
+/* ── MODAL ── */
+function openModal(){document.getElementById('payModal').classList.add('open');}
+function closeModal(){document.getElementById('payModal').classList.remove('open');}
+document.getElementById('payModal').addEventListener('click',function(e){if(e.target===this)closeModal();});
+
+/* ── TOAST ── */
+function showToast(msg,icon='fa-info-circle'){
+  const wrap=document.getElementById('toastWrap');
+  const t=document.createElement('div');t.className='toast';
+  t.innerHTML=`<i class="fas ${icon}"></i><span>${msg}</span>`;
+  wrap.appendChild(t);
+  setTimeout(()=>{t.style.animation='none';t.style.opacity='0';t.style.transform='translateX(60px)';
+    setTimeout(()=>t.remove(),400);},3000);
+}
+
+/* ── ANIMATE BINS ON LOAD ── */
+window.addEventListener('load',()=>{
+  document.querySelectorAll('.bfill').forEach(el=>{
+    const w=el.style.width;el.style.width='0';
+    setTimeout(()=>{el.style.width=w;},300);
+  });
+  setTimeout(()=>showToast('Dashboard loaded · All systems operational','fa-check-circle'),800);
+});
+
+/* ── SCROLL REVEAL ── */
+const observer=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.style.opacity='1';e.target.style.transform='none';}});
+},{threshold:.1});
+document.querySelectorAll('.sc2,.imp-card,.scard').forEach(el=>{
+  el.style.transition='opacity .5s ease,transform .5s ease';
+  observer.observe(el);
+});
+</script>
+</body>
+</html>

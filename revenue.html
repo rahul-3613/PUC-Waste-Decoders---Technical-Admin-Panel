@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Revenue — PUC EcoHealth Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root {
+  --primary:#0A1628; --card-bg:#1A2744; --accent:#4CAF50; --gold:#FFD700;
+  --muted:#78909C; --border:#263238; --danger:#ef5350; --info:#42a5f5; --surface:#0f1e35;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--primary);color:#e0e0e0;font-family:'Poppins',sans-serif;min-height:100vh;overflow-x:hidden;}
+#pcanvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;}
+
+/* NAVBAR */
+nav{background:rgba(10,22,40,0.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:64px;position:sticky;top:0;z-index:100;}
+.nav-brand{display:flex;align-items:center;gap:10px;font-size:1.1rem;font-weight:700;color:var(--accent);text-decoration:none;}
+.nav-links{display:flex;gap:4px;}
+.nav-links a{color:var(--muted);text-decoration:none;padding:6px 14px;border-radius:8px;font-size:0.85rem;font-weight:500;transition:all 0.2s;}
+.nav-links a:hover,.nav-links a.active{background:rgba(76,175,80,0.15);color:var(--accent);}
+.nav-right{display:flex;align-items:center;gap:12px;position:relative;}
+.nav-icon-btn{background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;color:var(--muted);cursor:pointer;transition:all 0.2s;font-size:0.9rem;}
+.nav-icon-btn:hover{background:rgba(76,175,80,0.15);color:var(--accent);border-color:var(--accent);}
+.avatar-btn{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#2e7d32);border:2px solid var(--accent);color:#fff;font-weight:700;font-size:0.8rem;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+
+/* TICKER */
+.ticker{background:rgba(76,175,80,0.08);border-bottom:1px solid rgba(76,175,80,0.2);padding:7px 0;overflow:hidden;position:relative;z-index:99;}
+.ticker-inner{display:flex;animation:ticker-scroll 30s linear infinite;white-space:nowrap;}
+.ticker-item{padding:0 40px;font-size:0.78rem;color:var(--muted);}
+.ticker-item span{color:var(--accent);font-weight:600;}
+@keyframes ticker-scroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+main{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:32px 20px 60px;}
+
+.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:12px;}
+.page-title{font-size:1.6rem;font-weight:800;color:#fff;}
+.live-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(239,83,80,0.15);border:1px solid rgba(239,83,80,0.4);color:#ef5350;border-radius:20px;padding:4px 14px;font-size:0.75rem;font-weight:600;}
+.live-badge::before{content:'';width:7px;height:7px;border-radius:50%;background:#ef5350;animation:blink 1.2s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
+.section-title{font-size:1.05rem;font-weight:700;color:#fff;display:flex;align-items:center;gap:8px;}
+.section-title::before{content:'';width:4px;height:20px;background:var(--accent);border-radius:2px;}
+
+/* STATS ROW */
+.stats-row{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:32px;}
+.stat-card{background:var(--card-bg);border:1px solid var(--border);border-radius:16px;padding:18px;text-align:center;transition:all 0.3s;}
+.stat-card:hover{transform:translateY(-3px);border-color:rgba(76,175,80,0.4);}
+.stat-icon{font-size:1.4rem;margin-bottom:6px;}
+.stat-num{font-size:1.5rem;font-weight:800;color:#fff;}
+.stat-label{font-size:0.7rem;color:var(--muted);margin-top:4px;}
+
+/* LAUNCH NOTICE */
+.notice-card{background:linear-gradient(135deg,rgba(76,175,80,0.1),rgba(26,39,68,0.98));border:2px solid rgba(76,175,80,0.35);border-radius:20px;padding:28px;margin-bottom:32px;display:flex;gap:20px;align-items:flex-start;}
+.notice-icon{font-size:2.2rem;flex-shrink:0;}
+.notice-title{font-size:1.05rem;font-weight:700;color:#fff;margin-bottom:8px;}
+.notice-text{font-size:0.85rem;color:#cfd8dc;line-height:1.7;}
+.notice-text strong{color:var(--accent);}
+
+/* PAYMENT CARDS */
+.pay-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:32px;}
+.pay-card{background:var(--card-bg);border:1px solid var(--border);border-radius:16px;padding:22px;text-align:center;transition:all 0.3s;}
+.pay-card:hover{transform:translateY(-4px);box-shadow:0 10px 24px rgba(0,0,0,0.3);}
+.pay-logo{width:56px;height:56px;border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-weight:800;font-size:0.85rem;color:#fff;}
+.pay-logo.bkash{background:#e2136e;}
+.pay-logo.nagad{background:#ec6608;}
+.pay-logo.upay{background:#1565c0;}
+.pay-name{font-size:0.95rem;font-weight:700;color:#fff;margin-bottom:4px;}
+.pay-number{font-size:0.75rem;color:var(--muted);margin-bottom:14px;}
+.pay-btn{display:inline-flex;align-items:center;gap:6px;background:rgba(76,175,80,0.12);border:1px solid rgba(76,175,80,0.35);color:var(--accent);text-decoration:none;border-radius:10px;padding:8px 18px;font-size:0.8rem;font-weight:600;transition:all 0.2s;}
+.pay-btn:hover{background:rgba(76,175,80,0.25);}
+
+/* PIE / DONUT */
+.donut-section{display:grid;grid-template-columns:260px 1fr;gap:32px;align-items:center;background:var(--card-bg);border:1px solid var(--border);border-radius:18px;padding:28px;margin-bottom:32px;}
+.donut-wrap{position:relative;width:220px;height:220px;margin:0 auto;}
+.donut{width:220px;height:220px;border-radius:50%;background:conic-gradient(var(--accent) 0deg 0deg, var(--gold) 0deg 0deg, var(--info) 0deg 0deg, rgba(255,255,255,0.05) 0deg 360deg);transition:background 1.6s ease;}
+.donut-hole{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:140px;height:140px;background:var(--card-bg);border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.donut-hole .dh-num{font-size:1.4rem;font-weight:800;color:#fff;}
+.donut-hole .dh-label{font-size:0.65rem;color:var(--muted);}
+.legend{display:flex;flex-direction:column;gap:14px;}
+.legend-item{display:flex;align-items:center;gap:12px;}
+.legend-dot{width:14px;height:14px;border-radius:4px;flex-shrink:0;}
+.legend-dot.social{background:var(--accent);}
+.legend-dot.team{background:var(--gold);}
+.legend-dot.maint{background:var(--info);}
+.legend-text{flex:1;}
+.legend-name{font-size:0.85rem;font-weight:600;color:#ddd;}
+.legend-sub{font-size:0.72rem;color:var(--muted);}
+.legend-val{font-size:0.95rem;font-weight:700;color:#fff;}
+
+/* SOURCE BARS */
+.source-wrap{background:var(--card-bg);border:1px solid var(--border);border-radius:18px;padding:26px;margin-bottom:32px;}
+.source-row{margin-bottom:20px;}
+.source-row:last-child{margin-bottom:0;}
+.source-top{display:flex;justify-content:space-between;font-size:0.85rem;margin-bottom:8px;}
+.source-top .sname{color:#ddd;font-weight:600;}
+.source-top .sval{color:var(--gold);font-weight:700;}
+.source-track{height:10px;background:rgba(255,255,255,0.06);border-radius:6px;overflow:hidden;}
+.source-fill{height:100%;border-radius:6px;width:0%;transition:width 1.6s ease;}
+.source-fill.ewaste{background:linear-gradient(90deg,var(--accent),#2e7d32);}
+.source-fill.med{background:linear-gradient(90deg,var(--info),#1565c0);}
+
+/* CALCULATOR */
+.calc-card{background:linear-gradient(135deg,rgba(255,215,0,0.06),rgba(26,39,68,0.98));border:2px solid rgba(255,215,0,0.25);border-radius:18px;padding:28px;margin-bottom:32px;}
+.calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:center;}
+.calc-input-wrap label{font-size:0.78rem;color:var(--muted);font-weight:600;display:block;margin-bottom:8px;}
+.calc-input-wrap input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;color:#fff;font-size:1rem;font-family:'Poppins',sans-serif;outline:none;}
+.calc-input-wrap input:focus{border-color:var(--gold);}
+.calc-rate{font-size:0.72rem;color:var(--muted);margin-top:8px;}
+.calc-result{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.calc-box{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:14px 8px;text-align:center;}
+.calc-box-num{font-size:1.1rem;font-weight:800;}
+.calc-box-num.g{color:var(--accent);}
+.calc-box-num.go{color:var(--gold);}
+.calc-box-num.b{color:var(--info);}
+.calc-box-label{font-size:0.62rem;color:var(--muted);margin-top:3px;}
+.calc-total{margin-top:14px;text-align:center;padding-top:14px;border-top:1px dashed rgba(255,255,255,0.1);}
+.calc-total-num{font-size:1.8rem;font-weight:800;color:var(--gold);}
+.calc-total-label{font-size:0.72rem;color:var(--muted);}
+
+/* TABLE */
+.table-wrap{background:var(--card-bg);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:32px;overflow-x:auto;}
+table{width:100%;border-collapse:collapse;min-width:680px;}
+thead tr{background:rgba(76,175,80,0.08);border-bottom:1px solid var(--border);}
+th{padding:12px 14px;text-align:left;font-size:0.75rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;white-space:nowrap;}
+td{padding:11px 14px;font-size:0.81rem;color:#ccc;border-bottom:1px solid rgba(255,255,255,0.04);white-space:nowrap;}
+tbody tr:last-child td{border-bottom:none;}
+tbody tr:hover{background:rgba(76,175,80,0.05);}
+.chip{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:12px;font-size:0.72rem;font-weight:600;}
+.chip-green{background:rgba(76,175,80,0.15);color:var(--accent);border:1px solid rgba(76,175,80,0.3);}
+.chip-blue{background:rgba(66,165,245,0.12);color:#42a5f5;border:1px solid rgba(66,165,245,0.3);}
+
+/* ALLOCATION CARDS */
+.alloc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:32px;}
+.alloc-card{background:var(--card-bg);border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:14px;padding:22px;}
+.alloc-card.team{border-left-color:var(--gold);}
+.alloc-card.maint{border-left-color:var(--info);}
+.alloc-icon{font-size:1.6rem;margin-bottom:10px;}
+.alloc-pct{font-size:1.3rem;font-weight:800;color:#fff;margin-bottom:4px;}
+.alloc-title{font-size:0.85rem;font-weight:700;color:#ddd;margin-bottom:10px;}
+.alloc-list{font-size:0.76rem;color:var(--muted);line-height:1.8;list-style:none;}
+.alloc-list li::before{content:'• ';color:var(--accent);}
+
+/* CHART */
+.chart-card{background:var(--card-bg);border:1px solid var(--border);border-radius:18px;padding:26px;margin-bottom:32px;}
+.chart-legend-row{display:flex;gap:20px;margin-top:14px;font-size:0.72rem;color:var(--muted);align-items:center;}
+.chart-legend-row span{display:flex;align-items:center;gap:6px;}
+.dot-bar{width:10px;height:10px;border-radius:3px;background:var(--accent);display:inline-block;}
+.dot-line{width:14px;height:2px;background:var(--gold);display:inline-block;}
+
+/* ENV SAVINGS */
+.env-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:32px;}
+.env-card{background:linear-gradient(135deg,rgba(76,175,80,0.06),rgba(26,39,68,0.95));border:1px solid rgba(76,175,80,0.2);border-radius:14px;padding:18px;text-align:center;}
+.env-icon{font-size:1.5rem;margin-bottom:6px;}
+.env-num{font-size:1.3rem;font-weight:800;color:var(--accent);}
+.env-label{font-size:0.68rem;color:var(--muted);margin-top:4px;}
+
+/* TIMELINE */
+.timeline-wrap{background:var(--card-bg);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:32px;}
+.tl-item{display:flex;gap:14px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.04);}
+.tl-item:last-child{border-bottom:none;}
+.tl-icon{width:34px;height:34px;border-radius:10px;background:rgba(76,175,80,0.1);border:1px solid rgba(76,175,80,0.25);display:flex;align-items:center;justify-content:center;font-size:0.85rem;flex-shrink:0;}
+.tl-body{flex:1;}
+.tl-title{font-size:0.83rem;font-weight:600;color:#ddd;}
+.tl-sub{font-size:0.72rem;color:var(--muted);margin-top:2px;}
+.tl-amt{font-size:0.85rem;font-weight:700;color:var(--gold);flex-shrink:0;}
+
+/* IMPACT */
+.impact-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px;}
+.impact-card{background:linear-gradient(135deg,rgba(26,39,68,0.98),rgba(15,30,53,0.95));border:1px solid var(--border);border-radius:16px;padding:24px;text-align:center;}
+.impact-icon{font-size:2rem;margin-bottom:10px;}
+.impact-title{font-size:0.9rem;font-weight:700;color:#fff;margin-bottom:6px;}
+.impact-text{font-size:0.76rem;color:var(--muted);line-height:1.6;}
+
+/* FOOTER */
+footer{background:var(--surface);border-top:1px solid var(--border);padding:40px 24px 20px;}
+.footer-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:32px;max-width:1100px;margin:0 auto 32px;}
+.footer-col h4{font-size:0.9rem;font-weight:700;color:var(--accent);margin-bottom:14px;}
+.footer-col p,.footer-col a{font-size:0.78rem;color:var(--muted);line-height:1.8;text-decoration:none;display:block;transition:color 0.2s;}
+.footer-col a:hover{color:var(--accent);}
+.footer-bottom{text-align:center;font-size:0.75rem;color:var(--muted);border-top:1px solid var(--border);padding-top:18px;max-width:1100px;margin:0 auto;}
+
+/* TOAST */
+.toast-wrap{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:10px;}
+.toast{background:var(--card-bg);border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:10px;padding:12px 18px;font-size:0.82rem;color:#ddd;min-width:240px;animation:slide-in 0.3s ease;box-shadow:0 8px 24px rgba(0,0,0,0.3);}
+@keyframes slide-in{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+
+/* SCROLL REVEAL */
+.reveal{opacity:0;transform:translateY(24px);transition:all 0.6s ease;}
+.reveal.in{opacity:1;transform:translateY(0);}
+
+@media(max-width:900px){
+  .stats-row{grid-template-columns:repeat(2,1fr);}
+  .pay-grid,.alloc-grid,.impact-grid{grid-template-columns:1fr;}
+  .donut-section{grid-template-columns:1fr;}
+  .calc-grid{grid-template-columns:1fr;}
+  .env-grid{grid-template-columns:repeat(2,1fr);}
+  .footer-grid{grid-template-columns:1fr 1fr;}
+  .nav-links{display:none;}
+}
+</style>
+</head>
+<body>
+<canvas id="pcanvas"></canvas>
+
+<nav>
+  <a class="nav-brand" href="index.html">♻️ PUC EcoHealth Hub</a>
+  <div class="nav-links">
+    <a href="index.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+    <a href="profile.html"><i class="fas fa-user"></i> Profile</a>
+    <a href="bins.html"><i class="fas fa-trash-alt"></i> Smart Bins</a>
+    <a href="revenue.html" class="active"><i class="fas fa-chart-line"></i> Revenue</a>
+    <a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
+  </div>
+  <div class="nav-right">
+    <button class="nav-icon-btn" onclick="showToast('🔔 No new notifications')"><i class="fas fa-bell"></i></button>
+    <button class="nav-icon-btn" onclick="showToast('💰 220 coins available')"><i class="fas fa-wallet"></i></button>
+    <button class="nav-icon-btn"><i class="fas fa-globe"></i></button>
+    <div class="avatar-btn">RS</div>
+  </div>
+</nav>
+
+<div class="ticker">
+  <div class="ticker-inner">
+    <span class="ticker-item">📊 Platform Status: <span>Just Launched</span> — Revenue Tracking Active</span>
+    <span class="ticker-item">💰 Total Revenue: <span>৳ 0</span> — Accumulating as partners collect e-waste</span>
+    <span class="ticker-item">🤝 6 Recycling Partners <span>Onboarded</span> across Chittagong</span>
+    <span class="ticker-item">🎯 Monthly Target: <span>৳ 50,000</span></span>
+    <span class="ticker-item">📊 Platform Status: <span>Just Launched</span> — Revenue Tracking Active</span>
+    <span class="ticker-item">💰 Total Revenue: <span>৳ 0</span> — Accumulating as partners collect e-waste</span>
+    <span class="ticker-item">🤝 6 Recycling Partners <span>Onboarded</span> across Chittagong</span>
+    <span class="ticker-item">🎯 Monthly Target: <span>৳ 50,000</span></span>
+  </div>
+</div>
+
+<main>
+  <div class="page-header">
+    <div>
+      <div class="page-title">💰 Revenue & Recycling Dashboard</div>
+      <div style="font-size:0.8rem;color:var(--muted)" id="dt"></div>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center;">
+      <span class="live-badge">LIVE</span>
+      <button class="btn-green" style="background:linear-gradient(135deg,var(--accent),#2e7d32);color:#fff;border:none;border-radius:10px;padding:9px 20px;font-size:0.82rem;font-weight:600;cursor:pointer;font-family:'Poppins',sans-serif;" onclick="showToast('🔄 Refreshing revenue data...')"><i class="fas fa-sync-alt"></i> Refresh</button>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-row reveal">
+    <div class="stat-card"><div class="stat-icon">💰</div><div class="stat-num" data-count="0">৳0</div><div class="stat-label">Total Revenue</div></div>
+    <div class="stat-card"><div class="stat-icon">📅</div><div class="stat-num" data-count="0">৳0</div><div class="stat-label">This Month</div></div>
+    <div class="stat-card"><div class="stat-icon">📆</div><div class="stat-num" data-count="0">৳0</div><div class="stat-label">This Week</div></div>
+    <div class="stat-card"><div class="stat-icon">🤝</div><div class="stat-num" data-count="6" data-suffix="">6</div><div class="stat-label">Partners</div></div>
+    <div class="stat-card"><div class="stat-icon">♻️</div><div class="stat-num" data-decimal="12.5" data-suffix=" kg">0 kg</div><div class="stat-label">Recycled</div></div>
+  </div>
+
+  <!-- LAUNCH NOTICE -->
+  <div class="notice-card reveal">
+    <div class="notice-icon">🚀</div>
+    <div>
+      <div class="notice-title">Revenue tracking just started — currently ৳ 0</div>
+      <div class="notice-text">PUC EcoHealth Hub has just launched. Revenue will begin accumulating as our <strong>6 recycling partners</strong> collect and process e-waste and medicine donations from Smart Bin BIN-001 and future deployments. Once collections are recorded, revenue will automatically split <strong>40% to social causes</strong>, <strong>30% to team welfare</strong>, and <strong>30% to system maintenance</strong> — shown live in the breakdown below.</div>
+    </div>
+  </div>
+
+  <!-- PAYMENT METHODS -->
+  <div class="section-header reveal"><div class="section-title">Withdrawal Methods</div></div>
+  <div class="pay-grid reveal">
+    <div class="pay-card">
+      <div class="pay-logo bkash">bKash</div>
+      <div class="pay-name">bKash Merchant</div>
+      <div class="pay-number">Merchant No. 8801885134402</div>
+      <a class="pay-btn" href="https://www.bkash.com" target="_blank"><i class="fas fa-arrow-up-right-from-square"></i> Open bKash</a>
+    </div>
+    <div class="pay-card">
+      <div class="pay-logo nagad">Nagad</div>
+      <div class="pay-name">Nagad</div>
+      <div class="pay-number">Merchant No.8801885134402</div>
+      <a class="pay-btn" href="https://nagad.com.bd" target="_blank"><i class="fas fa-arrow-up-right-from-square"></i> Open Nagad</a>
+    </div>
+    <div class="pay-card">
+      <div class="pay-logo upay">উপায়</div>
+      <div class="pay-name">উপায় Upay</div>
+      <div class="pay-number">Merchant No. 8801885134402</div>
+      <a class="pay-btn" href="https://www.upaybd.com" target="_blank"><i class="fas fa-arrow-up-right-from-square"></i> Open Upay</a>
+    </div>
+  </div>
+
+  <!-- DONUT -->
+  <div class="section-header reveal"><div class="section-title">Revenue Distribution</div></div>
+  <div class="donut-section reveal">
+    <div class="donut-wrap">
+      <div class="donut" id="donutChart"></div>
+      <div class="donut-hole"><div class="dh-num">৳0</div><div class="dh-label">TOTAL</div></div>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot social"></div><div class="legend-text"><div class="legend-name">Social Causes — 40%</div><div class="legend-sub">Healthcare, education, community</div></div><div class="legend-val">৳0</div></div>
+      <div class="legend-item"><div class="legend-dot team"></div><div class="legend-text"><div class="legend-name">Team Welfare — 30%</div><div class="legend-sub">Staff, volunteers, training</div></div><div class="legend-val">৳0</div></div>
+      <div class="legend-item"><div class="legend-dot maint"></div><div class="legend-text"><div class="legend-name">System Maintenance — 30%</div><div class="legend-sub">Bins, platform, tech upgrades</div></div><div class="legend-val">৳0</div></div>
+    </div>
+  </div>
+
+  <!-- SOURCE BREAKDOWN -->
+  <div class="section-header reveal"><div class="section-title">Revenue Source Breakdown</div></div>
+  <div class="source-wrap reveal">
+    <div class="source-row">
+      <div class="source-top"><span class="sname">♻️ E-Waste Recycling — 75% of total</span><span class="sval">৳0</span></div>
+      <div class="source-track"><div class="source-fill ewaste" data-width="75"></div></div>
+    </div>
+    <div class="source-row">
+      <div class="source-top"><span class="sname">💊 Medicine Collection — 25% of total</span><span class="sval">৳0</span></div>
+      <div class="source-track"><div class="source-fill med" data-width="25"></div></div>
+    </div>
+  </div>
+
+  <!-- CALCULATOR -->
+  <div class="section-header reveal"><div class="section-title">Projected Revenue Calculator</div></div>
+  <div class="calc-card reveal">
+    <div class="calc-grid">
+      <div class="calc-input-wrap">
+        <label>Estimated e-waste collected per month (kg)</label>
+        <input type="number" id="kgInput" placeholder="e.g. 100" min="0" oninput="calcRevenue()">
+        <div class="calc-rate">Rate: ৳ 50 per kg of e-waste collected</div>
+      </div>
+      <div>
+        <div class="calc-result">
+          <div class="calc-box"><div class="calc-box-num g" id="calcSocial">৳0</div><div class="calc-box-label">SOCIAL 40%</div></div>
+          <div class="calc-box"><div class="calc-box-num go" id="calcTeam">৳0</div><div class="calc-box-label">TEAM 30%</div></div>
+          <div class="calc-box"><div class="calc-box-num b" id="calcMaint">৳0</div><div class="calc-box-label">MAINT. 30%</div></div>
+        </div>
+        <div class="calc-total">
+          <div class="calc-total-num" id="calcTotal">৳0</div>
+          <div class="calc-total-label">Projected Monthly Revenue</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PARTNERS TABLE -->
+  <div class="section-header reveal"><div class="section-title">Recycling Partners</div></div>
+  <div class="table-wrap reveal">
+    <table>
+      <thead><tr><th>#</th><th>Company Name</th><th>Location</th><th>Collection Days</th><th>Type</th><th>Est. Revenue/Month</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>Bangladesh Recycling Industries Ltd</td><td>Chittagong Industrial Zone</td><td>Mon, Wed, Fri</td><td><span class="chip chip-green">E-Waste</span></td><td>৳0</td><td><span class="chip chip-green">Active</span></td></tr>
+        <tr><td>2</td><td>GreenCycle Bangladesh</td><td>Hazarighat, Chittagong</td><td>Tue, Thu, Sat</td><td><span class="chip chip-green">E-Waste</span></td><td>৳0</td><td><span class="chip chip-green">Active</span></td></tr>
+        <tr><td>3</td><td>City Corporation Waste Management</td><td>Chittagong City Corp</td><td>Daily</td><td><span class="chip chip-blue">Mixed</span></td><td>৳0</td><td><span class="chip chip-green">Active</span></td></tr>
+        <tr><td>4</td><td>Private Cleaning Services Ltd</td><td>Hazarighat Area</td><td>Mon–Sat</td><td><span class="chip chip-green">E-Waste</span></td><td>৳0</td><td><span class="chip chip-green">Active</span></td></tr>
+        <tr><td>5</td><td>EcoRecycle Bangladesh</td><td>Chittagong EPZ</td><td>Wed, Fri</td><td><span class="chip chip-blue">Electronics</span></td><td>৳0</td><td><span class="chip chip-green">Active</span></td></tr>
+        <tr><td>6</td><td>Chittagong Waste Treatment Plant</td><td>Kalurghat, Chittagong</td><td>Tue, Thu</td><td><span class="chip chip-blue">Mixed</span></td><td>৳0</td><td><span class="chip chip-green">Active</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ALLOCATION -->
+  <div class="section-header reveal"><div class="section-title">How Revenue Will Be Used</div></div>
+  <div class="alloc-grid reveal">
+    <div class="alloc-card">
+      <div class="alloc-icon">🌿</div>
+      <div class="alloc-pct">40%</div>
+      <div class="alloc-title">Social Causes</div>
+      <ul class="alloc-list">
+        <li>Healthcare support for low-income patients</li>
+        <li>Environmental education programs</li>
+        <li>Community development initiatives</li>
+      </ul>
+    </div>
+    <div class="alloc-card team">
+      <div class="alloc-icon">👥</div>
+      <div class="alloc-pct">30%</div>
+      <div class="alloc-title">Team Welfare</div>
+      <ul class="alloc-list">
+        <li>Staff salaries and incentives</li>
+        <li>Volunteer support and recognition</li>
+        <li>Training and skill programs</li>
+      </ul>
+    </div>
+    <div class="alloc-card maint">
+      <div class="alloc-icon">⚙️</div>
+      <div class="alloc-pct">30%</div>
+      <div class="alloc-title">System Maintenance</div>
+      <ul class="alloc-list">
+        <li>Smart bin upkeep and repairs</li>
+        <li>Platform hosting and operation</li>
+        <li>Technology upgrades (ESP32, sensors)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- MONTHLY CHART -->
+  <div class="section-header reveal"><div class="section-title">Monthly Revenue Trend</div></div>
+  <div class="chart-card reveal">
+    <canvas id="revChart" height="220" style="width:100%;"></canvas>
+    <div class="chart-legend-row">
+      <span><span class="dot-bar"></span> Monthly Revenue</span>
+      <span><span class="dot-line"></span> Target: ৳50,000/month</span>
+    </div>
+  </div>
+
+  <!-- ENV SAVINGS -->
+  <div class="section-header reveal"><div class="section-title">Environmental Savings</div></div>
+  <div class="env-grid reveal">
+    <div class="env-card"><div class="env-icon">🌫️</div><div class="env-num" data-decimal="25" data-suffix=" kg">0 kg</div><div class="env-label">CO₂ Reduced</div></div>
+    <div class="env-card"><div class="env-icon">🌳</div><div class="env-num" data-count="2">0</div><div class="env-label">Trees Saved</div></div>
+    <div class="env-card"><div class="env-icon">💧</div><div class="env-num" data-count="15000" data-suffix=" L">0 L</div><div class="env-label">Water Saved</div></div>
+    <div class="env-card"><div class="env-icon">⚡</div><div class="env-num" data-count="75" data-suffix=" kWh">0 kWh</div><div class="env-label">Energy Saved</div></div>
+  </div>
+
+  <!-- ACTIVITY LOG -->
+  <div class="section-header reveal"><div class="section-title">Collection Activity Log</div></div>
+  <div class="timeline-wrap reveal">
+    <div class="tl-item"><div class="tl-icon">♻️</div><div class="tl-body"><div class="tl-title">BIN-001 sensor check — Premier University Chittagong</div><div class="tl-sub">0 kg collected · City Corporation · Just now</div></div><div class="tl-amt">৳0</div></div>
+    <div class="tl-item"><div class="tl-icon">📡</div><div class="tl-body"><div class="tl-title">ESP32 module deployment confirmed</div><div class="tl-sub">BIN-001 · Hazari Lane · This week</div></div><div class="tl-amt">৳0</div></div>
+    <div class="tl-item"><div class="tl-icon">🤝</div><div class="tl-body"><div class="tl-title">Partner onboarding — 6 recycling companies</div><div class="tl-sub">Chittagong region · This month</div></div><div class="tl-amt">৳0</div></div>
+    <div class="tl-item"><div class="tl-icon">🚀</div><div class="tl-body"><div class="tl-title">Platform launched — Revenue tracking activated</div><div class="tl-sub">PUC EcoHealth Hub · Jan 2024</div></div><div class="tl-amt">৳0</div></div>
+  </div>
+
+  <!-- IMPACT -->
+  <div class="section-header reveal"><div class="section-title">Social Impact</div></div>
+  <div class="impact-grid reveal">
+    <div class="impact-card"><div class="impact-icon">🏥</div><div class="impact-title">Healthcare for the Underserved</div><div class="impact-text">A share of every taka funds free check-ups and medicine donations for low-income families in Chittagong.</div></div>
+    <div class="impact-card"><div class="impact-icon">📚</div><div class="impact-title">Environmental Education</div><div class="impact-text">Workshops and campus drives teach students proper e-waste disposal and recycling habits.</div></div>
+    <div class="impact-card"><div class="impact-icon">🌱</div><div class="impact-title">Community Greening</div><div class="impact-text">Tree-planting and clean-up drives across Hazarighat and the PUC campus, funded by recycling revenue.</div></div>
+  </div>
+</main>
+
+<footer>
+  <div class="footer-grid">
+    <div class="footer-col"><h4>♻️ PUC EcoHealth Hub</h4><p>Premier University Chittagong's smart recycling and healthcare platform. Building a greener tomorrow.</p></div>
+    <div class="footer-col"><h4>Quick Links</h4><a href="index.html">Dashboard</a><a href="profile.html">My Profile</a><a href="bins.html">Smart Bins</a><a href="revenue.html">Revenue</a></div>
+    <div class="footer-col"><h4>Payment</h4><a href="https://www.bkash.com" target="_blank">bKash</a><a href="https://nagad.com.bd" target="_blank">Nagad</a><a href="https://www.upaybd.com" target="_blank">উপায় Upay</a></div>
+    <div class="footer-col"><h4>Contact</h4><p><i class="fas fa-map-marker-alt"></i> 44 Hazari Lane, Chattogram 4000</p><p><i class="fas fa-envelope"></i> ecohub@puc.edu.bd</p><p><i class="fas fa-phone"></i> +880 31-XXXXXXX</p></div>
+  </div>
+  <div class="footer-bottom">♻️ PUC EcoHealth Hub © 2026 · Premier University Chittagong · All rights reserved</div>
+</footer>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+// Particles
+const canvas=document.getElementById('pcanvas');const ctx=canvas.getContext('2d');
+canvas.width=window.innerWidth;canvas.height=window.innerHeight;
+const pts=[];for(let i=0;i<35;i++)pts.push({x:Math.random()*canvas.width,y:canvas.height+Math.random()*200,s:Math.random()*2.5+1,spd:Math.random()*0.5+0.2,op:Math.random()*0.1+0.03});
+function drawPts(){ctx.clearRect(0,0,canvas.width,canvas.height);pts.forEach(p=>{ctx.beginPath();ctx.arc(p.x,p.y,p.s,0,Math.PI*2);ctx.fillStyle=`rgba(76,175,80,${p.op})`;ctx.fill();p.y-=p.spd;if(p.y<-10){p.y=canvas.height+10;p.x=Math.random()*canvas.width;}});requestAnimationFrame(drawPts);}
+drawPts();
+window.addEventListener('resize',()=>{canvas.width=window.innerWidth;canvas.height=window.innerHeight;});
+
+// DateTime
+function updateDT(){document.getElementById('dt').textContent=new Date().toLocaleString('en-BD',{weekday:'long',year:'numeric',month:'long',day:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit'});}
+setInterval(updateDT,1000);updateDT();
+
+// Toast
+function showToast(msg){const wrap=document.getElementById('toastWrap');const t=document.createElement('div');t.className='toast';t.textContent=msg;wrap.appendChild(t);setTimeout(()=>t.remove(),3500);}
+
+// Counter animations
+function animCounters(){
+  document.querySelectorAll('[data-count]').forEach(el=>{
+    const target=parseFloat(el.getAttribute('data-count'));
+    const suffix=el.getAttribute('data-suffix')||'';
+    const prefix=el.textContent.trim().startsWith('৳')?'৳':'';
+    let s=null;const dur=1500;
+    function step(ts){if(!s)s=ts;const p=Math.min((ts-s)/dur,1);el.textContent=prefix+Math.floor(p*target).toLocaleString()+suffix;if(p<1)requestAnimationFrame(step);}
+    requestAnimationFrame(step);
+  });
+  document.querySelectorAll('[data-decimal]').forEach(el=>{
+    const target=parseFloat(el.getAttribute('data-decimal'));
+    const suffix=el.getAttribute('data-suffix')||'';
+    let s=null;const dur=1500;
+    function step(ts){if(!s)s=ts;const p=Math.min((ts-s)/dur,1);el.textContent=(p*target).toFixed(1)+suffix;if(p<1)requestAnimationFrame(step);}
+    requestAnimationFrame(step);
+  });
+}
+
+// Source bars
+function animBars(){
+  document.querySelectorAll('.source-fill').forEach(el=>{
+    const w=el.getAttribute('data-width');
+    setTimeout(()=>{el.style.width=w+'%';},200);
+  });
+}
+
+// Donut chart (all zero -> show as faint full ring since values are 0)
+function animDonut(){
+  const donut=document.getElementById('donutChart');
+  // Since total revenue is ৳0, show equal proportional placeholder ring at low opacity
+  setTimeout(()=>{
+    donut.style.background='conic-gradient(var(--accent) 0deg 144deg, var(--gold) 144deg 252deg, var(--info) 252deg 360deg)';
+    donut.style.opacity='0.35';
+  },300);
+}
+
+// Calculator
+function calcRevenue(){
+  const kg=parseFloat(document.getElementById('kgInput').value)||0;
+  const total=kg*50;
+  const social=Math.round(total*0.4);
+  const team=Math.round(total*0.3);
+  const maint=Math.round(total*0.3);
+  document.getElementById('calcSocial').textContent='৳'+social.toLocaleString();
+  document.getElementById('calcTeam').textContent='৳'+team.toLocaleString();
+  document.getElementById('calcMaint').textContent='৳'+maint.toLocaleString();
+  document.getElementById('calcTotal').textContent='৳'+total.toLocaleString();
+}
+
+// Monthly bar chart (Canvas, no library)
+function drawRevChart(){
+  const canvas=document.getElementById('revChart');
+  const dctx=canvas.getContext('2d');
+  const dpr=window.devicePixelRatio||1;
+  const w=canvas.clientWidth, h=220;
+  canvas.width=w*dpr; canvas.height=h*dpr;
+  dctx.scale(dpr,dpr);
+  const months=['Jan','Feb','Mar','Apr','May','Jun'];
+  const values=[0,0,0,0,0,0];
+  const target=50000;
+  const maxVal=target*1.1;
+  const padL=50,padB=30,padT=20;
+  const chartW=w-padL-20, chartH=h-padB-padT;
+  const barW=chartW/months.length*0.5;
+  let progress=0;
+  function render(){
+    dctx.clearRect(0,0,w,h);
+    // gridlines
+    dctx.strokeStyle='rgba(255,255,255,0.06)';
+    dctx.lineWidth=1;
+    for(let i=0;i<=4;i++){
+      const y=padT+chartH-(chartH*i/4);
+      dctx.beginPath();dctx.moveTo(padL,y);dctx.lineTo(w-10,y);dctx.stroke();
+      dctx.fillStyle='rgba(120,144,156,0.7)';dctx.font='10px Poppins';
+      dctx.fillText('৳'+Math.round(maxVal*i/4).toLocaleString(),4,y+3);
+    }
+    // target line
+    const ty=padT+chartH-(chartH*target/maxVal);
+    dctx.strokeStyle='#FFD700';dctx.setLineDash([5,4]);dctx.lineWidth=1.5;
+    dctx.beginPath();dctx.moveTo(padL,ty);dctx.lineTo(w-10,ty);dctx.stroke();
+    dctx.setLineDash([]);
+    // bars
+    months.forEach((m,i)=>{
+      const x=padL+(chartW/months.length)*i+(chartW/months.length-barW)/2;
+      const val=values[i]*progress;
+      const barH=(val/maxVal)*chartH;
+      const y=padT+chartH-barH;
+      const grad=dctx.createLinearGradient(0,y,0,y+barH+2);
+      grad.addColorStop(0,'#4CAF50');grad.addColorStop(1,'#2e7d32');
+      dctx.fillStyle=barH>0?grad:'rgba(76,175,80,0.15)';
+      const drawH=Math.max(barH,3);
+      dctx.fillRect(x,padT+chartH-drawH,barW,drawH);
+      dctx.fillStyle='#78909C';dctx.font='11px Poppins';dctx.textAlign='center';
+      dctx.fillText(m,x+barW/2,h-8);
+    });
+    dctx.textAlign='left';
+  }
+  function step(){progress+=0.04;if(progress>1)progress=1;render();if(progress<1)requestAnimationFrame(step);}
+  step();
+}
+
+// Scroll reveal
+function initReveal(){
+  const els=document.querySelectorAll('.reveal');
+  const obs=new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');obs.unobserve(e.target);}});
+  },{threshold:0.1});
+  els.forEach(el=>obs.observe(el));
+}
+
+window.addEventListener('load',()=>{
+  animCounters();
+  animBars();
+  animDonut();
+  drawRevChart();
+  initReveal();
+  setTimeout(()=>showToast('💰 Revenue dashboard loaded — currently ৳0'),800);
+});
+window.addEventListener('resize',drawRevChart);
+</script>
+</body>
+</html>
